@@ -4,6 +4,7 @@ from app.main import main
 
 from flask import Flask, render_template
 from flask_login import login_required, current_user
+from app.plugins.decorators import biz_logging
 
 
 @main.route('/helloworld')
@@ -20,6 +21,7 @@ def hello(name="guest"):
 @main.route('/index')
 @main.route('/')
 @login_required
+@biz_logging
 def index(title="一路停车2.0"):
     return render_template("index.html", title=title)
 

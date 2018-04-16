@@ -7,6 +7,7 @@ from flask_login import login_user, logout_user, login_required, \
     current_user
 from app.main.forms.baseforms import LoginForm
 from app.model.SysUser import SysUser
+from app.plugins.decorators import biz_logging
 
 
 @auth.before_app_request
@@ -15,6 +16,7 @@ def before_request():
 
 
 @auth.route('/login', methods=["GET", "POST"])
+@biz_logging
 def login():
     logout_user()
     form = LoginForm()
