@@ -26,7 +26,7 @@ def login():
         if(user is not None) and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
             print("登录成功")
-            return redirect(request.args.get('next' or url_for("main.index")))
+            return redirect(request.args.get('next') or url_for("main.index"))
         flash("无效的用户名或密码")
     return render_template("auth/login.html", form=form)
 
