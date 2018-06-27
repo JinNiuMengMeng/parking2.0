@@ -43,3 +43,5 @@ venv
 
 Pipfile
 .idea
+*.log
+.DS_Store

@@ -1,19 +1,28 @@
 # -*- coding:utf-8 -*-
 
 import zmq
-from stationCom.config import HOST, PORT
-from stationCom.laneMsg.handleMsg import handleMessage
+from stationCom.laneMsg.handleMsg import HandleLaneMesg
 
 
-def getLaneMsg():
+class GetLaneMesg(object):
     """
-    订阅车道传递的消息
-    :return:
+    获取车道消息 - zmq订阅端
     """
-    context = zmq.Context()
-    recviver = context.socket(zmq.PULL)
-    recviver.connect("tcp://" + HOST + ":" + str(PORT))
-    print("消息订阅已启动")
-    while True:
-        msg = recviver.recv_string()
-        handleMessage(message=msg)
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+
+    def getLaneMsg(self):
+        """
+        接收车道传递来的消息
+        """
+        context = zmq.Context()
+        recviver = context.socket(zmq.PULL)
+        recviver.connect("tcp://%s:%d" % (self.host, self.port))
+        print("处于订阅状态...")
+        while True:
+            msg = recviver.recv_string()
+            HandleLaneMesg().handleMessage(message=msg)
+
+
+

@@ -1,9 +1,9 @@
 # -*- coding:utf-8 -*-
 
 
-class HandleLaneMesg(object):
+class HandleCloudMesg(object):
     """
-    处理车道发送的指令
+    处理云端发送的指令
     """
     def __init__(self):
         pass
