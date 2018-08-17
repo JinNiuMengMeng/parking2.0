@@ -1,9 +1,10 @@
 import os
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class AppConfig:
-    SECRET_KEY = os.environ.get('"SECRET_KEY') or "test_secret_key"
+    SECRET_KEY = os.environ.get('SECRET_KEY') or "test_secret_key"
 
     @staticmethod
     def init_app(app):
@@ -13,7 +14,8 @@ class AppConfig:
 class DevelopConfig(AppConfig):
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = "mysql://parkinguser:xmrbi404@172.16.52.35/parking2.0_new"
-        #os.environ.get("dev.database.url")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # os.environ.get("dev.database.url")
 
 
 class TestConfig(AppConfig):

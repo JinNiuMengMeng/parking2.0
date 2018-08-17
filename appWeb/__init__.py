@@ -8,13 +8,12 @@ from flask_login import LoginManager
 from config.app_config import config
 
 '''
-供手机端app访问
+供web端访问
 '''
 
 bootstrap = Bootstrap()
-db = SQLAlchemy()
 login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
+login_manager.login_view = 'appWeb_auth.login'
 
 
 def create_app(config_name, app_name):
@@ -27,14 +26,13 @@ def create_app(config_name, app_name):
     config[config_name].init_app(app)
 
     bootstrap.init_app(app)
-    db.init_app(app)
 
     login_manager.init_app(app)
 
-    from app.main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    from appWeb.main import appWeb_main as appWeb_main_blueprint
+    app.register_blueprint(appWeb_main_blueprint)
 
-    from app.auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint, url_prefix="/auth")
+    from appWeb.auth import appWeb_auth as appWeb_auth_blueprint
+    app.register_blueprint(appWeb_auth_blueprint, url_prefix="/auth")
 
     return app

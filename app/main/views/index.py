@@ -7,10 +7,9 @@ from flask_login import login_required, current_user
 from app.plugins.decorators import biz_logging
 
 
-@main.route('/helloworld')
+@main.route('/hello')
 def helloworld():
-    return 'hello world'
-
+    return 'app<br>hello world'
 
 
 @main.route('/hello/<name>')
@@ -24,6 +23,3 @@ def hello(name="guest"):
 @biz_logging
 def index(title="一路停车2.0"):
     return render_template("index.html", title=title)
-
-
-
