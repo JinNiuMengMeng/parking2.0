@@ -1,10 +1,12 @@
 import os
+from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class AppConfig:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or "test_secret_key"
+    SECRET_KEY = "mGTkRLGb5i3/6emM,fJ%:T8)"
+    PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
     @staticmethod
     def init_app(app):
@@ -13,8 +15,8 @@ class AppConfig:
 
 class DevelopConfig(AppConfig):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "mysql://parkinguser:xmrbi404@172.16.52.35/parking2.0_new"
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # SQLALCHEMY_DATABASE_URI = "mysql://parkinguser:xmrbi404@172.16.52.35/parking2.0_new"
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False
     # os.environ.get("dev.database.url")
 
 
