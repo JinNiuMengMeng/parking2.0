@@ -1,11 +1,15 @@
 # -*- coding:utf-8 -*-
 import datetime
+import hashlib
+import json
 import os
+import time
 from functools import wraps
-from flask import abort, jsonify, session, Response, make_response, request
+from flask import abort, jsonify, make_response, session
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
-from werkzeug.http import parse_cookie
+
+from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR
 
 
 def permission_required(permission):
@@ -15,9 +19,7 @@ def permission_required(permission):
             if not current_user.can(permission):
                 abort(403)
             return f(*args, **kwargs)
-
         return decorated_function
-
     return decorator
 
 
@@ -25,8 +27,13 @@ def biz_logging(func):
     @wraps(func)
     def with_logging(*args, **kwargs):
         return func(*args, **kwargs)
-
     return with_logging
+
+
+def generate_md5(str):
+    hl = hashlib.md5()
+    hl.update(str.encode(encoding='utf-8'))
+    return hl.hexdigest()
 
 
 def get_result(data=None, success=True, error_code=0, message=None, ):
@@ -45,37 +52,40 @@ def param_judge(recv_param, regulate_param):
 def random_string(n=32):
     return (''.join(map(lambda xx: (hex(ord(xx))[2:]), os.urandom(n))))[0:32]
 
-"""
-    response=make_response('Hello World');  
-    response.set_cookie('Name','Hyman')  
-    return response
-    
-    response.headers.add('No-Cookie', parse_cookie(response.headers.get('Set-Cookie'))[app.session_cookie_name])
-    response.headers.remove('Set-Cookie')
-"""
-
 
 def set_session(params):
     token_value = random_string()
     user_info = MysqlHelper.fetchone(sql="select * from station.sys_user where username=%s",
                                      params=params.get("userName"))
-    session[token_value] = {}
-    session[token_value]["userName"] = params.get("userName", None)
-    session[token_value]["user_id"] = user_info.get("user_id", None)
-    session[token_value]["passWord"] = user_info.get("password", None)
-    session[token_value]["rights"] = user_info.get("rights", None)
-    session[token_value]["role_id"] = user_info.get("role_id", None)
-    session[token_value]["status"] = user_info.get("status", None)
-    session[token_value]["email"] = user_info.get("email", None)
-    session[token_value]["phone"] = user_info.get("phone", None)
-    session[token_value]["user_type"] = user_info.get("user_type", None)
-    session[token_value]["cardno"] = user_info.get("cardno", None)
-    session[token_value]["sex"] = user_info.get("sex", None)
 
-    res = make_response(get_result())
+    if user_info == -1:
+        return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
+    elif user_info == -2:
+        return get_result(success=False, error_code=USER_NOT_EXIST, message="未找到相关用户信息")
+    elif user_info == -3:
+        return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 操作失败")
 
-    out_date = datetime.datetime.now() + datetime.timedelta(hours=2)
-    res.set_cookie(key='token', value=token_value,  expires=out_date)
+    if generate_md5(params.get("passWord", "")) == user_info.get("password", None):
 
-    # res.headers["token"] = random_cookies + "; HttpOnly; Path=/"
-    return {"response": res, "session": session}
+        session[token_value] = {
+            "username": user_info.get("username", ""),
+            "user_id": user_info.get("user_id", ""),
+            "password": user_info.get("password", ""),
+            "rights": user_info.get("rights", ""),
+            "role_id": user_info.get("role_id", ""),
+            "status": user_info.get("status", ""),
+            "email": user_info.get("email", ""),
+            "phone": user_info.get("phone", ""),
+            "user_type": user_info.get("user_type", ""),
+            "cardno": user_info.get("cardno", ""),
+            "sex": user_info.get("sex", ""),
+            "cookies": token_value,
+        }
+        session.permanent = True
+        response = make_response(get_result(message="登录成功"))
+        out_date = datetime.datetime.now() + datetime.timedelta(hours=2)
+        response.set_cookie(key='token', value=token_value, expires=out_date)
+        return response
+    else:
+        res = get_result(success=False, error_code=USER_PASSWORD_ERROR, message="用户密码错误")
+        return res

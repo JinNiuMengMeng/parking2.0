@@ -14,16 +14,22 @@ class MysqlHelper(object):
 
     @classmethod
     def __connect(cls):
-        cls.conn = pymysql.connect(host=cls.host, user=cls.user, password=cls.password,
-                                   database=cls.database, port=cls.port, charset=cls.charset,
-                                   cursorclass=pymysql.cursors.DictCursor)
-        cls.cur = cls.conn.cursor()
+        try:
+            cls.conn = pymysql.connect(host=cls.host, user=cls.user, password=cls.password,
+                                       database=cls.database, port=cls.port, charset=cls.charset,
+                                       cursorclass=pymysql.cursors.DictCursor)
+            cls.cur = cls.conn.cursor()
+            if cls.conn and cls.cur:
+                return True
+        except:
+            return False
 
     @classmethod
     def fetchone(cls, sql, params=None):
-        data_one = None
+        data_one = -2
         try:
-            cls.__connect()
+            if not cls.__connect():
+                return -1
             count = cls.cur.execute(sql, params)
             if count != 0:
                 data_one = cls.cur.fetchone()
@@ -35,9 +41,10 @@ class MysqlHelper(object):
 
     @classmethod
     def fetchall(cls, sql, params=None):
-        data_all = None
+        data_all = -2
         try:
-            cls.__connect()
+            if not cls.__connect():
+                return -1
             count = cls.cur.execute(sql, params)
             if count != 0:
                 data_all = cls.cur.fetchall()
@@ -48,9 +55,10 @@ class MysqlHelper(object):
         return data_all
 
     def __item(self, sql, params=None):
-        count = 0
+        count = -3
         try:
-            self.__connect()
+            if not self.__connect():
+                return -1
             count = self.cur.execute(sql, params)
             self.conn.commit()
         except Exception as ex:
@@ -75,3 +83,4 @@ class MysqlHelper(object):
     def __close(cls):
         if cls.cur:
             cls.cur.close()
+

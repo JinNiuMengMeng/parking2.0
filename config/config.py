@@ -81,3 +81,9 @@ Json_Field_Rrror = 3003             # Json 字段错误
 
 # 前端
 PARAMS_ERROR = 10001                # 参数异常
+USER_PASSWORD_ERROR = 20001         # 密码错误
+USER_NOT_EXIST = 20002              # 用户名错误或者用户不存在
+
+REDIS_HANDLE_ERROR = 30001          # Redis 操作失败
+MYSQL_HANDLE_ERROR = 30002          # Mysql 操作失败
+SESSION_HANDLE_ERROR = 30003        # Session 过期

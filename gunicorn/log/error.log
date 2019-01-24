@@ -33,3 +33,10 @@ Traceback (most recent call last):
   File "/home/ubuntu/Env/parkingPy27env/local/lib/python2.7/site-packages/werkzeug/datastructures.py", line 29, in is_immutable
     raise TypeError('%r objects are immutable' % self.__class__.__name__)
 TypeError: 'EnvironHeaders' objects are immutable
+[2019-01-24 10:13:15 +0000] [16549] [INFO] Starting gunicorn 19.9.0
+[2019-01-24 10:13:15 +0000] [16549] [INFO] Listening at: http://0.0.0.0:8000 (16549)
+[2019-01-24 10:13:15 +0000] [16549] [INFO] Using worker: sync
+[2019-01-24 10:13:15 +0000] [16557] [INFO] Booting worker with pid: 16557
+[2019-01-24 10:17:24 +0000] [16549] [CRITICAL] WORKER TIMEOUT (pid:16557)
+[2019-01-24 10:17:24 +0000] [16557] [INFO] Worker exiting (pid: 16557)
+[2019-01-24 10:17:25 +0000] [16892] [INFO] Booting worker with pid: 16892
