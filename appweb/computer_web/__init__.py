@@ -1,6 +1,11 @@
+# -*- coding:utf-8 -*-
 import os
-
 from flask import Blueprint
+
+
+'''
+供电脑 web 端访问
+'''
 
 computer_web_main = Blueprint(
     name='computer_web_main',

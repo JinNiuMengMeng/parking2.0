@@ -1,7 +1,10 @@
 # -*- coding:utf-8 -*-
 import os
-
 from flask import Blueprint
+
+"""
+手机网页端
+"""
 
 mobile_web_main = Blueprint(
     name='mobile_web_main',

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import time
-from flask import session, request, Response, make_response
+from flask import session, request, make_response
 from appweb.computer_web import computer_web_main
-from appweb.plugins.decorators import get_result, param_judge, random_string, set_session
+from appweb.plugins.decorators import get_result, param_judge, set_session
 from appweb.plugins.handle_mysql import MysqlHelper
 from config.config import PARAMS_ERROR, SESSION_HANDLE_ERROR
 

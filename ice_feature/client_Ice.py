@@ -2,12 +2,12 @@
 
 import sys
 import Ice
+
 Ice.loadSlice("./epms.ice")
 import stpy
 
 
 def st_Send_Py(communicator):
-
     ST2PY_AR_ENTRANCE = 0x0003A100  # 上传入口通行记录
     ST2PY_AR_EXPORT = 0x0003A200  # 出口通行记录
     ST2PY_LANE_DEV_STAT = 0x0003A300  # 车道设备状态
@@ -41,7 +41,6 @@ def st_Send_Py(communicator):
 
 
 def py_Send_St(communicator):
-
     send_data_1 = '{"doorNo": 1,"laneNo": 2}'
     send_data_2 = '{"doorNo": 1,"laneNo": 2, "status": 1}'
     send_data_3 = '{"doorNo": 1,"laneNo": 2, "status": 0}'
@@ -108,4 +107,3 @@ with Ice.initialize(sys.argv) as communicator:  # 初始化运行环境
 
     # py_Send_St(communicator)
     st_Send_Py(communicator)
-

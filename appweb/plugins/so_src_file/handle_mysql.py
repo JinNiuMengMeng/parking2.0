@@ -3,7 +3,7 @@ import pymysql
 
 
 class MysqlHelper(object):
-    host = "192.168.43.38"
+    host = "192.168.14.205"
     port = 3306
     database = "movie"
     user = "root"
