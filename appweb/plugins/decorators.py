@@ -36,7 +36,7 @@ def generate_md5(str):
     return hl.hexdigest()
 
 
-def get_result(data=None, success=True, error_code=0, message=None, ):
+def get_result(data=None, success=True, error_code=0, message=None):
     return jsonify({"success": success, "error_code": error_code, "message": message, "data": data})
 
 

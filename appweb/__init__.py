@@ -21,5 +21,4 @@ def create_app(config_name, app_name):
 
     socketio.init_app(app)
 
-    app.permanent_session_lifetime = datetime.timedelta(seconds=60*60*2)
     return app

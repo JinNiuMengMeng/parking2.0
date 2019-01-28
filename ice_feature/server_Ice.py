@@ -13,8 +13,7 @@ Ice.loadSlice("./epms.ice")
 import stpy
 
 picture_temp = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + os.path.sep + "."
-                               ).split("parking2.0")[0] + "parking2.0/picture_temp"
-picture_temp_test = os.path.abspath(os.path.dirname(os.path.abspath(__file__))) + "/picture_temp"
+                               ).split("parking2.0")[0] + "parking2.0/appweb/static/car_pic_temp"
 
 ICE_CONFIG = ['--Ice.ThreadPool.Server.Size=5', '--Ice.ThreadPool.Server.SizeMax=10']
 
@@ -33,12 +32,13 @@ Lane_Dev_Stat_List = ['AuxLpr_ConnStat', 'MajLpr_ConnStat', 'ParkNO', 'RailCoilS
 Lane_Work_Stat_list = ['FreePass', 'OpenLane', 'ParkNO', 'Sleep', 'Work', 'WorkMode', 'doorNo', 'laneNo']
 
 # 异常返回值说明
-Picture_Path_Rrror = 1001  # 图片路径异常
-Picture_Copy_Rrror = 1002  # 图片拷贝异常
+Picture_Path_Rrror = 1001           # 图片路径异常
+Picture_Copy_Rrror = 1002           # 图片拷贝异常
 Car_Number_identifier_Error = 2001  # 车牌号识别异常
-Json_Format_Error = 3001  # Json格式异常
-Command_Number_Rrror = 3002  # command 错误
-Json_Field_Rrror = 3003  # Json 字段错误
+Json_Format_Error = 3001            # Json格式异常
+Command_Number_Rrror = 3002         # command 错误
+Json_Field_Rrror = 3003             # Json 字段错误
+User_Logout = 4001                  # 用户已退出
 
 
 def get_result_json(ssID, erID=0, msg=""):
@@ -69,8 +69,12 @@ class Handle_stMessage(object):
         if oper_result:
             copy_picture_result = Handle_stMessage._copy_picture(json_data)
             if copy_picture_result == "success":
-                resp = requests.get(url="http://127.0.0.1:8000/wa", params=json_data)
-                print resp
+                for i in range(3):
+                    resp = requests.get(url="http://127.0.0.1:8000/parking2/recvLaneMsg", params=json_data)
+                    if resp.status_code == 200:
+                        break
+                    else:
+                        print "发送车辆信息失败, 错误码:", resp.status_code
                 return get_result_json(ssID=sessionID)
             else:
                 return get_result_json(ssID=sessionID, erID=copy_picture_result, msg="Picture_Path_Rrror")

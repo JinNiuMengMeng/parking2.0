@@ -87,3 +87,4 @@ USER_NOT_EXIST = 20002              # 用户名错误或者用户不存在
 REDIS_HANDLE_ERROR = 30001          # Redis 操作失败
 MYSQL_HANDLE_ERROR = 30002          # Mysql 操作失败
 SESSION_HANDLE_ERROR = 30003        # Session 过期
+USER_LOGOUT = 40001                 # 用户退出

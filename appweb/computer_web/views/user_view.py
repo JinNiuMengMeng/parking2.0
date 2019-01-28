@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import time
 from flask import session, request, make_response
 from appweb.computer_web import computer_web_main
 from appweb.plugins.decorators import get_result, param_judge, set_session

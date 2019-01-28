@@ -1,12 +1,14 @@
+# -*- coding:utf-8 -*-
 import os
-from datetime import timedelta
+import datetime
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class AppConfig:
-    SECRET_KEY = "mGTkRLGb5i3/6emM,fJ%:T8)"
-    PERMANENT_SESSION_LIFETIME = timedelta(days=7)
+    SECRET_KEY = os.urandom(24)
+    PERMANENT_SESSION_LIFETIME = datetime.timedelta(seconds=60*60*2)
+    SESSION_PERMANENT = True
 
     @staticmethod
     def init_app(app):
