@@ -54,33 +54,51 @@ def random_string(n=32):
 
 
 def set_session(params):
-    token_value = random_string()
-    user_info = MysqlHelper.fetchone(sql="select * from station.sys_user where username=%s",
-                                     params=params.get("userName"))
-
-    if user_info == -1:
+    mysql_sql = """
+        select usr_sys_user.id as user_id, usr_sys_user.user_name, 
+          usr_sys_user.state, usr_sys_user.user_type, 
+          usr_sys_user.password, usr_sys_user.salt,
+          usr_user_role.role_id, usr_role.name as role_name,
+          usr_grant.privilege_code as pri_code, usr_privilege.name as pri_name,
+          usr_privilege.pri_type, usr_privilege.url,
+          usr_privilege.parent_code, usr_privilege.leaf_flag, usr_privilege.icon
+        from usr_sys_user, usr_user_role, usr_role, usr_grant, usr_privilege
+        where usr_user_role.user_id=usr_sys_user.id
+          and usr_role.code=usr_user_role.role_id
+          and usr_user_role.role_id=usr_grant.role_id
+          and usr_grant.privilege_code=usr_privilege.code
+          and usr_sys_user.user_name='{}';
+    """.format(params.get("userName"))
+    user_info_all = MysqlHelper.fetchall(sql=mysql_sql)
+    if user_info_all == -1:
         return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
-    elif user_info == -2:
+    elif user_info_all == -2:
         return get_result(success=False, error_code=USER_NOT_EXIST, message="未找到相关用户信息")
-    elif user_info == -3:
+    elif user_info_all == -3:
         return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 操作失败")
 
-    if generate_md5(params.get("passWord", "")) == user_info.get("password", None):
+    if generate_md5(params.get("passWord", "") + user_info_all[0].get("salt", "")) == user_info_all[0].get("password", ""):
+        token_value = random_string()
+        privilege = []
 
-        session[token_value] = {
-            "username": user_info.get("username", ""),
-            "user_id": user_info.get("user_id", ""),
-            "password": user_info.get("password", ""),
-            "rights": user_info.get("rights", ""),
-            "role_id": user_info.get("role_id", ""),
-            "status": user_info.get("status", ""),
-            "email": user_info.get("email", ""),
-            "phone": user_info.get("phone", ""),
-            "user_type": user_info.get("user_type", ""),
-            "cardno": user_info.get("cardno", ""),
-            "sex": user_info.get("sex", ""),
-            "cookies": token_value,
-        }
+        for user_info_one in user_info_all:
+            user_info_one.pop("salt", "")
+            user_info_one.pop("password", "")
+            privilege.append(user_info_one)
+            session[token_value] = {
+                "userInfo": {
+                    "user_id": user_info_one.pop("user_id", ""),
+                    "user_name": user_info_one.pop("user_name", ""),
+                    "state": user_info_one.pop("state", ""),
+                    "user_type": user_info_one.pop("user_type", ""),
+                },
+                "roleInfo": {
+                    "role_id": user_info_one.pop("role_id", ""),
+                    "role_name": user_info_one.pop("role_name", "")
+                },
+                "privilegeSet": privilege,
+            }
+
         session.permanent = True
         response = make_response(get_result(message="登录成功"))
         out_date = datetime.datetime.now() + datetime.timedelta(hours=2)
@@ -89,3 +107,8 @@ def set_session(params):
     else:
         res = get_result(success=False, error_code=USER_PASSWORD_ERROR, message="用户密码错误")
         return res
+
+
+if __name__ == "__main__":
+    for i in range(10):
+        print random_string()

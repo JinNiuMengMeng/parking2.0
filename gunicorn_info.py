@@ -15,5 +15,12 @@ worker_class = 'eventlet'
 worker_connections = 2000
 loglevel = 'warning'
 
-# /home/ubuntu/Env/parkingPy27env/bin/gunicorn manage:appWeb -c gunicorn_info.py
-# /home/ubuntu/Env/parkingPy27env/bin/gunicorn --chdir "/home/ubuntu/PycharmProjects/LuQiao/parking2.0" -w 1 -b 0.0.0.0:8000 manage:appWeb --worker-class eventlet --log-level debug --backlog 2000 --access-logfile "/home/ubuntu/PycharmProjects/LuQiao/parking2.0/gunicorn/access.log" --error-logfile "/home/ubuntu/PycharmProjects/LuQiao/parking2.0/gunicorn/error.log"
+"""
+/home/ubuntu/Env/parkingPy27env/bin/gunicorn manage:appWeb -c gunicorn_info.py
+
+/home/ubuntu/Env/parkingPy27env/bin/gunicorn --chdir \
+"/home/ubuntu/PycharmProjects/LuQiao/parking2.0" -w 1 -b 0.0.0.0:8000 \
+manage:appWeb --worker-class eventlet --log-level debug --backlog 2000 \
+--access-logfile "/home/ubuntu/PycharmProjects/LuQiao/parking2.0/gunicorn/access.log" \
+--error-logfile "/home/ubuntu/PycharmProjects/LuQiao/parking2.0/gunicorn/error.log"
+"""
