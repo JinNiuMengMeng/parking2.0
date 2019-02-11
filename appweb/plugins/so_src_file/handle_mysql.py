@@ -34,11 +34,13 @@ class MysqlHelper(object):
             count = cls.cur.execute(sql, params)
             if count != 0:
                 data_one = cls.cur.fetchone()
+                return data_one
+            else:
+                return count
         except Exception as ex:
-            return ex
+            return data_one
         finally:
             cls.__close()
-        return data_one
 
     @classmethod
     def fetchall(cls, sql, params=None):
@@ -49,24 +51,25 @@ class MysqlHelper(object):
             count = cls.cur.execute(sql, params)
             if count != 0:
                 data_all = cls.cur.fetchall()
+            return data_all
         except Exception as ex:
-            return ex
+            return data_all
         finally:
             cls.__close()
-        return data_all
 
-    def __item(self, sql, params=None):
+    @classmethod
+    def __item(cls, sql, params=None):
         count = -3
         try:
-            if not self.__connect():
+            if not cls.__connect():
                 return -1
-            count = self.cur.execute(sql, params)
-            self.conn.commit()
+            count = cls.cur.execute(sql, params)
+            cls.conn.commit()
+            return count
         except Exception as ex:
-            return ex
+            return count
         finally:
-            self.__close()
-        return count
+            cls.__close()
 
     @classmethod
     def update(cls, sql, params=None):

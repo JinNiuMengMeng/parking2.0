@@ -88,3 +88,6 @@ REDIS_HANDLE_ERROR = 30001          # Redis 操作失败
 MYSQL_HANDLE_ERROR = 30002          # Mysql 操作失败
 SESSION_HANDLE_ERROR = 30003        # Session 过期
 USER_LOGOUT = 40001                 # 用户退出
+USER_EXIST = 40002                  # 用户已经存在
+
+ROLE_NAME_ERROR = 4002              # 角色名已经存在

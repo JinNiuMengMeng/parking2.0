@@ -41,9 +41,10 @@ def get_result(data=None, success=True, error_code=0, message=None):
 
 
 def param_judge(recv_param, regulate_param):
-    recv_param.sort()
+    parm_keys = recv_param.keys()
+    parm_keys.sort()
     regulate_param.sort()
-    if recv_param == regulate_param:
+    if parm_keys == regulate_param and len(parm_keys) == len([_ for _ in recv_param.values() if _]):
         return True
     else:
         return False
@@ -110,5 +111,7 @@ def set_session(params):
 
 
 if __name__ == "__main__":
-    for i in range(10):
+    for i in range(1):
         print random_string()
+
+
