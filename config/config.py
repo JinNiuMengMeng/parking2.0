@@ -90,4 +90,7 @@ SESSION_HANDLE_ERROR = 30003        # Session 过期
 USER_LOGOUT = 40001                 # 用户退出
 USER_EXIST = 40002                  # 用户已经存在
 
-ROLE_NAME_ERROR = 4002              # 角色名已经存在
+ROLE_NAME_ERROR = 40003             # 角色名已经存在
+ROLE_NOT_PRI = 40004                # 角色没有权限
+
+PRI_ERROR = 50001                   # 权限名错误
