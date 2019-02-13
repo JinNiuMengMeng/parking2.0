@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import sys
+
 reload(sys)
 sys.setdefaultencoding("utf-8")
 from flask import session, request, make_response
@@ -21,7 +22,7 @@ def get_user_info():  # 获取用户信息
 
 
 @computer_web_main.route("/login", methods=["GET", "POST"])
-def login():    # 登录
+def login():  # 登录
     params = request.get_json()
     if param_judge(params, ["userName", "passCode", "passWord"]):
         res = set_session(params)
@@ -44,7 +45,7 @@ def logout():  # 退出
 
 
 @computer_web_main.route("/addrole", methods=["GET", "POST"])
-def add_role():    # 添加角色
+def add_role():  # 添加角色
     params = request.get_json()
     if param_judge(params, ["name", "parent_id"]):
         role_id = code = random_string()
@@ -53,14 +54,15 @@ def add_role():    # 添加角色
         if find_res == 0:
             insert_sql = """insert yilu_park.usr_role(id, code, name, state, parent_id, del_flag, create_time) 
             value("{}", "{}", "{}", 1, "{}", 1, "{}");
-            """.format(role_id, code, params.get("name"), params.get("parent_id"), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            """.format(role_id, code, params.get("name"), params.get("parent_id"),
+                       datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         else:
             if find_res.get("del_flag") == 1:
                 return get_result(success=False, error_code=ROLE_NAME_ERROR, message="角色名已经存在")
             else:
-                insert_sql = """update yilu_park.usr_role set state=1, parent_id="{}", del_flag=1, delete_time="{}"
-                                where name="{}";""".format(params.get("parent_id"),
-                            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("name"))
+                insert_sql = """update yilu_park.usr_role set state=1, parent_id="{}", del_flag=1, delete_time="{}" 
+                                where name="{}";""".format(
+                    params.get("parent_id"), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("name"))
         res = MysqlHelper.insert(sql=insert_sql)
         if res == -1:
             return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
@@ -73,7 +75,7 @@ def add_role():    # 添加角色
 
 
 @computer_web_main.route("/delrole", methods=["GET", "POST"])
-def del_role():    # 删除角色
+def del_role():  # 删除角色
     params = request.get_json()
     if param_judge(params, ["role_name", ]):
         quary_sql = """select * from usr_user_role where del_flag=1 and role_id=(select id from usr_role where name="{}");""".format(
@@ -98,31 +100,12 @@ def del_role():    # 删除角色
 
 
 @computer_web_main.route("/modifypri", methods=["GET", "POST"])
-def modify_role_pri():    # 修改角色权限
+def modify_role_pri():  # 修改角色权限
     params = request.get_json()
 
-    if param_judge(params, ["pri_name", "role_name"]):
-        """
--- 修改角色权限  "role_name", "pri_name": ["权限管理", "业务管理"]
--- 第一步: 获取role_name的parent_name的所有权限列表
-SELECT role_id, privilege_code 
-FROM yilu_park.usr_grant 
-WHERE role_id=(SELECT parent_id FROM yilu_park.usr_role WHERE name="岗亭人员" and del_flag=1) and del_flag=1;
-
--- 第二步: 获取权限名称的code
-SELECT name, code FROM yilu_park.usr_privilege WHERE name="权限管理" or name="业务管理" and del_flag=1;
-
--- 第三步: 代码判断code是否全部存在于parent_name的权限列表中
--- 第四步: 删除有关role_name的所有权限
--- INSERT INTO hk_test(username, passwd) VALUES ('qmf2', 'qmf2'),('qmf3', 'qmf3'),('qmf4', 'qmf4'),('qmf5', 'qmf5')
-DELETE FROM yilu_park.usr_grant WHERE role_id=(SELECT code FROM yilu_park.usr_role WHERE name="岗亭人员" and del_flag=1);
--- 第五步: 添加前端提交的所有记录
-INSERT INTO yilu_park.usr_grant(id, role_id, privilege_code, del_flag, create_time, modify_time) 
-VALUES (),(),()
-        """
+    if param_judge(params, ["pri_name", "role_id"]):
         # 第一步: 获取role_name的parent_name的所有权限列表
-        quary_parnet_pri = """SELECT role_id, privilege_code FROM yilu_park.usr_grant WHERE role_id=(SELECT parent_id 
-              FROM yilu_park.usr_role WHERE name="{}" and del_flag=1) and del_flag=1;""".format(params.get("role_name"))
+        quary_parnet_pri = """SELECT role_id, privilege_code FROM yilu_park.usr_grant WHERE role_id="{}";""".format(params.get("role_id"))
 
         quary_res = MysqlHelper.fetchall(quary_parnet_pri)
 
@@ -152,14 +135,13 @@ VALUES (),(),()
             return get_result(success=False, error_code=PRI_ERROR, message="权限名错误")
 
         if len(pri_name_code_list) == len(list(set(pri_name_code_list).intersection(set(parent_privilege_all)))):
-            # 判断role_name的权限是否是patent权限的子集
-            # 删除role的所有权限
-            del_role_pri_sql = """DELETE FROM yilu_park.usr_grant WHERE role_id=(SELECT code FROM yilu_park.usr_role 
-                WHERE name="{}" and del_flag=1);""".format(params.get("role_name"))
+            # 第三步: 判断role_name的权限是否是patent权限的子集
+            # 第四步: 删除role的所有权限
+            del_role_pri_sql = """DELETE FROM yilu_park.usr_grant WHERE role_id="{}";""".format(params.get("role_id"))
             MysqlHelper.insert(sql=del_role_pri_sql)
-            role_id = MysqlHelper.fetchone(sql="""SELECT code FROM yilu_park.usr_role WHERE name="{}" and del_flag=1""".format(params.get("role_name"))).get("code")
+            role_id = params.get("role_id")
 
-            # 添加权限
+            # 第五步: 添加前端提交的权限
             insert_role_pri = """INSERT INTO yilu_park.usr_grant(id, role_id, privilege_code, del_flag, create_time) 
             VALUES """
             for _ in pri_name_code_list:
@@ -167,7 +149,8 @@ VALUES (),(),()
                     insert_role_pri += '("' + random_string() + '","' + role_id + '","' + _ + '", 1, "' + datetime.datetime.now().strftime(
                         "%Y-%m-%d %H:%M:%S") + '");'
                 else:
-                    insert_role_pri += '("' + random_string() + '","' + role_id + '","' + _ + '", 1, "' + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + '"),'
+                    insert_role_pri += '("' + random_string() + '","' + role_id + '","' + _ + '", 1, "' + datetime.datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S") + '"),'
 
             res = MysqlHelper.insert(sql=insert_role_pri)
             if res == -1:
@@ -183,7 +166,7 @@ VALUES (),(),()
 
 
 @computer_web_main.route("/adduser", methods=["GET", "POST"])
-def add_user():    # 添加用户
+def add_user():  # 添加用户
     params = request.get_json()
     if param_judge(params, ["user_name", "real_name", "password", "user_role"]):
         quary_sql = """select del_flag from usr_sys_user where user_name="{}" or real_name="{}";""".format(
@@ -205,9 +188,10 @@ def add_user():    # 添加用户
                 return get_result(success=False, error_code=USER_EXIST, message="用户已经存在")
             else:
                 sql1 = """update yilu_park.usr_sys_user set state=1, del_flag=1, user_name="{}", real_name="{}", 
-                        password="{}", salt="{}", modify_time="{}" where user_name="{}";""".format(params.get("user_name"),
-                        params.get("real_name"), password, salt, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        params.get("user_name"))
+                        password="{}", salt="{}", modify_time="{}" where user_name="{}";""".format(
+                    params.get("user_name"),
+                    params.get("real_name"), password, salt, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    params.get("user_name"))
 
         # 插入用户角色表
         quary_sql2 = """select del_flag from usr_user_role where user_id=(select id from usr_sys_user where user_name="{}");""".format(
@@ -227,9 +211,7 @@ def add_user():    # 添加用户
                 user_id, role_id, role_id)
 
         for i in [sql1, sql2]:
-            print i
             res = MysqlHelper.insert(sql=i)
-            print res
             if res == -1:
                 return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
             elif res == -3:
@@ -242,14 +224,14 @@ def add_user():    # 添加用户
 
 
 @computer_web_main.route("/deluser", methods=["GET", "POST"])
-def del_user():    # 删除用户
+def del_user():  # 删除用户
     params = request.get_json()
     if param_judge(params, ["user_name", ]):
         sql1 = """update yilu_park.usr_sys_user set state=0, del_flag=0, modify_time="{}" where user_name="{}";""".format(
             datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_name"))
         sql2 = """update yilu_park.usr_user_role set del_flag=0, modify_time="{}" where user_id=
               (select id from usr_sys_user where user_name="{}");""".format(
-            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_name"),)
+            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_name"), )
         for i in [sql1, sql2]:
             res = MysqlHelper.insert(sql=i)
             if res == -1:
@@ -259,5 +241,48 @@ def del_user():    # 删除用户
             else:
                 pass
         return get_result()
+    else:
+        return get_result(success=False, error_code=PARAMS_ERROR, message="参数异常")
+
+
+@computer_web_main.route("/getalluser", methods=["GET", "POST"])
+def get_all_user():  # 获取用户列表
+    quary_sql = """SELECT id, user_name, sex, real_name, telephone, email, state, create_time from yilu_park.usr_sys_user WHERE del_flag=1;"""
+    res = MysqlHelper.fetchall(sql=quary_sql)
+    if res == -1:
+        return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
+    elif res == -2:
+        return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 操作失败")
+    else:
+        return get_result(data=res)
+
+
+@computer_web_main.route("/getallrole", methods=["GET", "POST"])
+def get_all_role():  # 获取角色列表
+    quary_sql = """SELECT code, name, state, parent_id, create_time from usr_role where del_flag=1;"""
+    res = MysqlHelper.fetchall(sql=quary_sql)
+    if res == -1:
+        return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
+    elif res == -2:
+        return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 操作失败")
+    else:
+        return get_result(data=res)
+
+
+@computer_web_main.route("/getrolepri", methods=["GET", "POST"])
+def get_role_pri():  # 获取角色权限
+    params = request.get_json()
+    if param_judge(params, ["code", ]):
+        quary_sql = """SELECT privilege_code, name as privilege_name, ord_num, leaf_flag, icon, parent_code  
+                        FROM usr_grant, usr_privilege 
+                        WHERE role_id="{}" 
+                        and privilege_code=usr_privilege.code;""".format(params.get("code"))
+        res = MysqlHelper.fetchall(sql=quary_sql)
+        if res == -1:
+            return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
+        elif res == -2:
+            return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 操作失败")
+        else:
+            return get_result(data=res)
     else:
         return get_result(success=False, error_code=PARAMS_ERROR, message="参数异常")
