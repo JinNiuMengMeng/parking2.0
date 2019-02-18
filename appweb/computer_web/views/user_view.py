@@ -77,10 +77,8 @@ def add_role():  # 添加角色
 @computer_web_main.route("/delrole", methods=["GET", "POST"])
 def del_role():  # 删除角色
     params = request.get_json()
-    if param_judge(params, ["role_name", ]):
-        quary_sql = """select * from usr_user_role where del_flag=1 and role_id=(select id from usr_role where name="{}");""".format(
-            params.get("role_name")
-        )
+    if param_judge(params, ["role_id", ]):
+        quary_sql = """select * from usr_user_role where del_flag=1 and role_id="{}";""".format(params.get("role_id"))
         res = MysqlHelper.fetchone(sql=quary_sql)
         if res != 0:
             return get_result(success=False, error_code=USER_EXIST, message="存在用户占用该角色, 不可删除")
@@ -226,12 +224,11 @@ def add_user():  # 添加用户
 @computer_web_main.route("/deluser", methods=["GET", "POST"])
 def del_user():  # 删除用户
     params = request.get_json()
-    if param_judge(params, ["user_name", ]):
-        sql1 = """update yilu_park.usr_sys_user set state=0, del_flag=0, modify_time="{}" where user_name="{}";""".format(
-            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_name"))
-        sql2 = """update yilu_park.usr_user_role set del_flag=0, modify_time="{}" where user_id=
-              (select id from usr_sys_user where user_name="{}");""".format(
-            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_name"), )
+    if param_judge(params, ["user_id", ]):
+        sql1 = """update yilu_park.usr_sys_user set state=0, del_flag=0, modify_time="{}" where id="{}";""".format(
+            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_id"))
+        sql2 = """update yilu_park.usr_user_role set del_flag=0, modify_time="{}" where user_id="{}";""".format(
+            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_id"), )
         for i in [sql1, sql2]:
             res = MysqlHelper.insert(sql=i)
             if res == -1:
