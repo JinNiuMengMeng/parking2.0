@@ -24,19 +24,19 @@ def st_Send_Py(communicator):
         raise RuntimeError("Invalid proxy")
 
     res_ar_entrance = send_Lane.msgSt2py(send_data_1, ST2PY_AR_ENTRANCE, 10)
-    print "res_ar_entrance:", res_ar_entrance
+    print("res_ar_entrance:", res_ar_entrance)
     # time.sleep(1)
 
     res_ar_export = send_Lane.msgSt2py(send_data_2, ST2PY_AR_EXPORT, 11)
-    print "res_ar_export:", res_ar_export
+    print("res_ar_export:", res_ar_export)
     # time.sleep(1)
 
     res_lane_dev_stat = send_Lane.msgSt2py(send_data_3, ST2PY_LANE_DEV_STAT, 12)
-    print "res_lane_dev_stat:", res_lane_dev_stat
+    print("res_lane_dev_stat:", res_lane_dev_stat)
     # time.sleep(1)
 
     res_lane_work_stat = send_Lane.msgSt2py(send_data_4, ST2PY_LANE_WORK_STAT, 13)
-    print "res_lane_work_stat:", res_lane_work_stat
+    print("res_lane_work_stat:", res_lane_work_stat)
     # time.sleep(1)
 
 
@@ -64,43 +64,43 @@ def py_Send_St(communicator):
 
     # 抬杆
     res_rall_up = recv_Barrier.msgPy2st(send_data_1, PY2ST_RAIL_UP, 1)
-    print "res_rall_up:", res_rall_up
+    print("res_rall_up:", res_rall_up)
 
     # 落杆
     res_rall_down = recv_Barrier.msgPy2st(send_data_1, PY2ST_RAIL_DOWN, 2)
-    print "res_rall_down:", res_rall_down
+    print("res_rall_down:", res_rall_down)
 
     # 打开潮汐车道
     res_tide_lane = recv_Barrier.msgPy2st(send_data_2, PY2ST_OPEN_TIDE_LANE, 3)
-    print "res_tide_lane:", res_tide_lane
+    print("res_tide_lane:", res_tide_lane)
 
     # 是否长传图片
     res_car_img = recv_Barrier.msgPy2st(send_data_2, PY2ST_UPLOAD_CAR_IMG, 4)
-    print "res_car_img:", res_car_img
+    print("res_car_img:", res_car_img)
 
     # 上传门号道号信息
     res_doorNo_lane_info = recv_Barrier.msgPy2st(send_data_2, PY2ST_UPLOAD_DOORNO_LANE_INFO, 5)
-    print "res_doorNo_lane_info:", res_doorNo_lane_info
+    print("res_doorNo_lane_info:", res_doorNo_lane_info)
 
     # 一车一杆
     res_laneType = recv_Barrier.msgPy2st(send_data_2, PY2ST_CONFIG_COMMON_LANETYPE, 6)
-    print "res_laneType:", res_laneType
+    print("res_laneType:", res_laneType)
 
     # 自由流
     res_freepass = recv_Barrier.msgPy2st(send_data_2, PY2ST_CONFIG_FREEPASS, 7)
-    print "res_freepass:", res_freepass
+    print("res_freepass:", res_freepass)
 
     # 车道唤醒，休眠
     res_laneSleep = recv_Barrier.msgPy2st(send_data_2, PY2ST_CONFIG_LANESLEEP, 8)
-    print "res_laneSleep:", res_laneSleep
+    print("res_laneSleep:", res_laneSleep)
 
     # 二次识别
     res_trigger = recv_Barrier.msgPy2st(send_data_2, PY2ST_TRIGGER_2ND_LPR, 9)
-    print "res_trigger:", res_trigger
+    print("res_trigger:", res_trigger)
 
     # 上下班
     res_on_duty = recv_Barrier.msgPy2st(send_data_2, PY2ST_CONFIG_SYSTEM_ON_DUTY, 10)
-    print "res_on_duty:", res_on_duty
+    print("res_on_duty:", res_on_duty)
 
 
 with Ice.initialize(sys.argv) as communicator:  # 初始化运行环境

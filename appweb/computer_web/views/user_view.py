@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 import datetime
-import sys
-
-reload(sys)
-sys.setdefaultencoding("utf-8")
+try:
+    import sys
+    reload(sys)
+    sys.setdefaultencoding("utf-8")
+except:
+    pass
 from flask import session, request, make_response
 from appweb.computer_web import computer_web_main
 from appweb.plugins.decorators import get_result, param_judge, set_session, random_string, generate_md5
@@ -14,8 +16,10 @@ from config.config import PARAMS_ERROR, SESSION_HANDLE_ERROR, MYSQL_HANDLE_ERROR
 
 @computer_web_main.route("/getuserinfo", methods=["GET", "POST"])
 def get_user_info():  # 获取用户信息
+
     try:
-        user_info = session[request.cookies.values()[0]]
+        sess_key = [x for x in request.cookies.values() if len(x) == 32][0]
+        user_info = session[sess_key]
         return get_result(data=user_info)
     except:
         return get_result(success=False, error_code=SESSION_HANDLE_ERROR, message="Session 已过期, 请重新登录")
@@ -34,8 +38,14 @@ def login():  # 登录
 @computer_web_main.route("/logout", methods=["GET", "POST"])
 def logout():  # 退出
     try:
-        if session.has_key(request.cookies.values()[0]):
-            session.pop(request.cookies.values()[0], None)
+        sess_key = [x for x in request.cookies.values() if len(x) == 32][0]
+        try:
+            judge = session.has_key(sess_key)
+        except:
+            judge = session.__contains__(sess_key)
+
+        if judge:
+            session.pop(sess_key, None)
 
         response = make_response(get_result(message="退出成功"))
         response.set_cookie(key="token", value="", expires=0)

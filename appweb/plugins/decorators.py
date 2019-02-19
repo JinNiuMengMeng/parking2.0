@@ -1,9 +1,7 @@
 # -*- coding:utf-8 -*-
 import datetime
 import hashlib
-import json
 import os
-import time
 from functools import wraps
 from flask import abort, jsonify, make_response, session
 from flask_login import current_user
@@ -41,7 +39,7 @@ def get_result(data=None, success=True, error_code=0, message=None):
 
 
 def param_judge(recv_param, regulate_param):
-    parm_keys = recv_param.keys()
+    parm_keys = list(recv_param.keys())
     parm_keys.sort()
     regulate_param.sort()
     if parm_keys == regulate_param and len(parm_keys) == len([_ for _ in recv_param.values() if _]):
@@ -51,7 +49,11 @@ def param_judge(recv_param, regulate_param):
 
 
 def random_string(n=32):
-    return (''.join(map(lambda xx: (hex(ord(xx))[2:]), os.urandom(n))))[0:32]
+    try:
+        result = (''.join(map(lambda xx: (hex(ord(xx))[2:]), os.urandom(n))))[0:32]
+    except:
+        result = (''.join(map(lambda xx: (hex(xx)[2:]), os.urandom(n))))[0:32]
+    return result
 
 
 def set_session(params):
@@ -112,6 +114,6 @@ def set_session(params):
 
 if __name__ == "__main__":
     for i in range(1):
-        print random_string()
+        print(random_string())
 
 

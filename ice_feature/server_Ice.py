@@ -64,7 +64,7 @@ class Handle_stMessage(object):
 
     @classmethod
     def _car_entrance(cls, json_data, sessionID):
-        print "ar_entrance"
+        print("ar_entrance")
         oper_result = Handle_stMessage._judge_json(json_data, Car_Entrance)
         if oper_result:
             copy_picture_result = Handle_stMessage._copy_picture(json_data)
@@ -74,7 +74,7 @@ class Handle_stMessage(object):
                     if resp.status_code == 200:
                         break
                     else:
-                        print "发送车辆信息失败, 错误码:", resp.status_code
+                        print("发送车辆信息失败, 错误码:", resp.status_code
                 return get_result_json(ssID=sessionID)
             else:
                 return get_result_json(ssID=sessionID, erID=copy_picture_result, msg="Picture_Path_Rrror")
@@ -83,7 +83,7 @@ class Handle_stMessage(object):
 
     @classmethod
     def _car_export(cls, json_data, sessionID):
-        print "ar_export"
+        print("ar_export")
         oper_result = Handle_stMessage._judge_json(json_data, Car_Export)
         if oper_result:
             copy_picture_result = Handle_stMessage._copy_picture(json_data)
@@ -96,7 +96,7 @@ class Handle_stMessage(object):
 
     @classmethod
     def _lane_dev_stat(cls, json_data, sessionID):
-        print "lane_dev_stat"
+        print("lane_dev_stat")
         oper_result = Handle_stMessage._judge_json(json_data, Lane_Dev_Stat_List)
 
         if oper_result:
@@ -106,7 +106,7 @@ class Handle_stMessage(object):
 
     @classmethod
     def _lane_work_stat(cls, json_data, sessionID):
-        print "lane_work_stat"
+        print("lane_work_stat")
         oper_result = Handle_stMessage._judge_json(json_data, Lane_Work_Stat_list)
 
         if oper_result:
@@ -134,14 +134,14 @@ class Handle_stMessage(object):
         lane_list.sort()
         json_data_keys_list = json_data.keys()
         json_data_keys_list.sort()
-        print lane_list, ":lane_list"
-        print json_data_keys_list, ":json_data_keys_list"
+        print(lane_list, ":lane_list")
+        print(json_data_keys_list, ":json_data_keys_list")
         return operator.eq(json_data_keys_list, lane_list)
 
 
 class StPy(stpy.st2py):
     def msgSt2py(self, datajson, command, sessionID, current=None):
-        print "----------- Python 站级服务端接收数据为: -----------"
+        print("----------- Python 站级服务端接收数据为: -----------")
         try:
             json_data = yaml.safe_load(datajson)
         except:
@@ -152,10 +152,10 @@ class StPy(stpy.st2py):
 class FakeLane(stpy.py2st):
     def msgPy2st(self, dataJson, command, sessionID, current=None):
         time.sleep(5)
-        print "模拟车道服务端--接收数据为: "
-        print "dataJson:\t", dataJson
-        print "command:\t", command
-        print "sessionID:\t", sessionID
+        print("模拟车道服务端--接收数据为: ")
+        print("dataJson:\t", dataJson)
+        print("command:\t", command)
+        print("sessionID:\t", sessionID)
         return sessionID
 
 
@@ -171,5 +171,5 @@ with Ice.initialize(ICE_CONFIG) as ic:  # 初始化运行环境
     ic.waitForShutdown()
 
 if __name__ == "__main__":
-    # print os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + os.path.sep + ".")
+    # print(os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + os.path.sep + ".")
     pass
