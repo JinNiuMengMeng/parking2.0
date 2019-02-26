@@ -3,11 +3,21 @@ import datetime
 import hashlib
 import os
 from functools import wraps
-from flask import abort, jsonify, make_response, session
+from flask import abort, jsonify, make_response, session,request
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
 
-from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR
+from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR
+
+
+def check_login(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        user_token = request.cookies.get("token")
+        if not session.__contains__(user_token):
+            return get_result(success=False, error_code=SESSION_HANDLE_ERROR, message="Session 已过期, 请重新登录")
+        return func(*args, **kwargs)
+    return decorated_function
 
 
 def permission_required(permission):
@@ -64,7 +74,7 @@ def set_session(params):
           usr_user_role.role_id, usr_role.name as role_name,
           usr_grant.privilege_code as pri_code, usr_privilege.name as pri_name,
           usr_privilege.pri_type, usr_privilege.url,
-          usr_privilege.parent_code, usr_privilege.leaf_flag, usr_privilege.icon
+          usr_privilege.parent_code, usr_privilege.leaf_flag, usr_privilege.icon, usr_privilege.target
         from usr_sys_user, usr_user_role, usr_role, usr_grant, usr_privilege
         where usr_user_role.user_id=usr_sys_user.id
           and usr_role.code=usr_user_role.role_id
@@ -72,6 +82,7 @@ def set_session(params):
           and usr_grant.privilege_code=usr_privilege.code
           and usr_sys_user.user_name='{}';
     """.format(params.get("userName"))
+
     user_info_all = MysqlHelper.fetchall(sql=mysql_sql)
     if user_info_all == -1:
         return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")

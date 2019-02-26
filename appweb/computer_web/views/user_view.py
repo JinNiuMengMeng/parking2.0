@@ -8,15 +8,15 @@ except:
     pass
 from flask import session, request, make_response
 from appweb.computer_web import computer_web_main
-from appweb.plugins.decorators import get_result, param_judge, set_session, random_string, generate_md5
+from appweb.plugins.decorators import get_result, param_judge, set_session, random_string, generate_md5, check_login
 from appweb.plugins.handle_mysql import MysqlHelper
 from config.config import PARAMS_ERROR, SESSION_HANDLE_ERROR, MYSQL_HANDLE_ERROR, ROLE_NAME_ERROR, USER_EXIST, \
-    ROLE_NOT_PRI, PRI_ERROR
+    ROLE_NOT_PRI, PRI_ERROR, USER_LOGIN_ERROR
 
 
 @computer_web_main.route("/getuserinfo", methods=["GET", "POST"])
+@check_login
 def get_user_info():  # 获取用户信息
-
     try:
         sess_key = [x for x in request.cookies.values() if len(x) == 32][0]
         user_info = session[sess_key]
@@ -36,6 +36,7 @@ def login():  # 登录
 
 
 @computer_web_main.route("/logout", methods=["GET", "POST"])
+@check_login
 def logout():  # 退出
     try:
         sess_key = [x for x in request.cookies.values() if len(x) == 32][0]
@@ -55,6 +56,7 @@ def logout():  # 退出
 
 
 @computer_web_main.route("/addrole", methods=["GET", "POST"])
+@check_login
 def add_role():  # 添加角色
     params = request.get_json()
     if param_judge(params, ["name", "parent_id"]):
@@ -85,6 +87,7 @@ def add_role():  # 添加角色
 
 
 @computer_web_main.route("/delrole", methods=["GET", "POST"])
+@check_login
 def del_role():  # 删除角色
     params = request.get_json()
     if param_judge(params, ["role_id", ]):
@@ -108,6 +111,7 @@ def del_role():  # 删除角色
 
 
 @computer_web_main.route("/modifypri", methods=["GET", "POST"])
+@check_login
 def modify_role_pri():  # 修改角色权限
     params = request.get_json()
 
@@ -174,6 +178,7 @@ def modify_role_pri():  # 修改角色权限
 
 
 @computer_web_main.route("/adduser", methods=["GET", "POST"])
+@check_login
 def add_user():  # 添加用户
     params = request.get_json()
     if param_judge(params, ["user_name", "real_name", "password", "user_role"]):
@@ -232,6 +237,7 @@ def add_user():  # 添加用户
 
 
 @computer_web_main.route("/deluser", methods=["GET", "POST"])
+@check_login
 def del_user():  # 删除用户
     params = request.get_json()
     if param_judge(params, ["user_id", ]):
@@ -253,6 +259,7 @@ def del_user():  # 删除用户
 
 
 @computer_web_main.route("/getalluser", methods=["GET", "POST"])
+@check_login
 def get_all_user():  # 获取用户列表
     quary_sql = """SELECT id, user_name, sex, real_name, telephone, email, state, create_time from yilu_park.usr_sys_user WHERE del_flag=1;"""
     res = MysqlHelper.fetchall(sql=quary_sql)
@@ -265,18 +272,51 @@ def get_all_user():  # 获取用户列表
 
 
 @computer_web_main.route("/getallrole", methods=["GET", "POST"])
+@check_login
 def get_all_role():  # 获取角色列表
-    quary_sql = """SELECT code, name, state, parent_id, create_time from usr_role where del_flag=1;"""
+    user_token = request.cookies.get("token")
+    user_role_id = session.get(user_token).get("roleInfo").get("role_id")
+    quary_sql = """SELECT code, name, state, parent_id, create_time from usr_role where del_flag=1 and parent_id="{user_role_id}" or code="{user_role_id}";""".format(user_role_id=user_role_id)
+
     res = MysqlHelper.fetchall(sql=quary_sql)
+
+    # 将当前登录的用户角色的parent_id设为None(前端需求)
+    for _ in res:
+        if _.get("code") == user_role_id:
+            _["parent_id"] = ""
+        else:
+            pass
+
+    # 查询当前用户角色的level
+    res3 = MysqlHelper.fetchone(sql="""SELECT code, parent_id from usr_role where del_flag=1 and code="{}";""".format(user_role_id))
+
+    user_parent_id = res3.get("parent_id")
+
+    if not user_parent_id:  # parent_id 为空, 超级管理员
+        level = 1
+    else:
+        mysql_parent_id = MysqlHelper.fetchone(sql="""SELECT code, parent_id from usr_role where del_flag=1 and code="{}";""".format(user_parent_id))
+        if not mysql_parent_id.get("parent_id"):  # 根据parent_id查询对应的code与parent_id
+            level = 2
+        else:
+            level = 3
+
+    # 封装数据
+    all_data = {
+        "role_list": res,
+        "role_level": level
+    }
+
     if res == -1:
         return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
     elif res == -2:
         return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 操作失败")
     else:
-        return get_result(data=res)
+        return get_result(data=all_data)
 
 
 @computer_web_main.route("/getrolepri", methods=["GET", "POST"])
+@check_login
 def get_role_pri():  # 获取角色权限
     params = request.get_json()
     if param_judge(params, ["code", ]):

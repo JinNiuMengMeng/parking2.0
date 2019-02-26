@@ -12,8 +12,7 @@ import yaml
 Ice.loadSlice("./epms.ice")
 import stpy
 
-picture_temp = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + os.path.sep + "."
-                               ).split("parking2.0")[0] + "parking2.0/appweb/static/car_pic_temp"
+picture_temp = os.path.abspath(os.path.dirname(os.path.abspath(__file__)) + os.path.sep + ".").split("parking2.0")[0] + "parking2.0/appweb/static/car_pic_temp"
 
 ICE_CONFIG = ['--Ice.ThreadPool.Server.Size=5', '--Ice.ThreadPool.Server.SizeMax=10']
 
@@ -74,7 +73,7 @@ class Handle_stMessage(object):
                     if resp.status_code == 200:
                         break
                     else:
-                        print("发送车辆信息失败, 错误码:", resp.status_code
+                        print("发送车辆信息失败, 错误码:", resp.status_code)
                 return get_result_json(ssID=sessionID)
             else:
                 return get_result_json(ssID=sessionID, erID=copy_picture_result, msg="Picture_Path_Rrror")

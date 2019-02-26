@@ -56,7 +56,6 @@ def py_Send_St(communicator):
     PY2ST_TRIGGER_2ND_LPR = 0x0004AA00  # 二次识别
     PY2ST_CONFIG_SYSTEM_ON_DUTY = 0x0004AB00  # 上下班
 
-    # py_send = communicator.stringToProxy("Epms_st:default -h 192.168.14.199 -p 10000")
     py_send = communicator.stringToProxy("Epms_st:default -p 10000")
     recv_Barrier = stpy.py2stPrx.checkedCast(py_send)
     if not recv_Barrier:
