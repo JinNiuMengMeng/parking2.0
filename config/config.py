@@ -95,3 +95,4 @@ ROLE_NAME_ERROR = 40003             # 角色名已经存在
 ROLE_NOT_PRI = 40004                # 角色没有权限
 
 PRI_ERROR = 50001                   # 权限名错误
+PRI_NUMBER = 50002                  # 超过权限层数

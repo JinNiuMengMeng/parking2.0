@@ -3,7 +3,7 @@ import datetime
 import hashlib
 import os
 from functools import wraps
-from flask import abort, jsonify, make_response, session,request
+from flask import abort, jsonify, make_response, session, request
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
 
@@ -17,6 +17,7 @@ def check_login(func):
         if not session.__contains__(user_token):
             return get_result(success=False, error_code=SESSION_HANDLE_ERROR, message="Session 已过期, 请重新登录")
         return func(*args, **kwargs)
+
     return decorated_function
 
 
@@ -27,7 +28,9 @@ def permission_required(permission):
             if not current_user.can(permission):
                 abort(403)
             return f(*args, **kwargs)
+
         return decorated_function
+
     return decorator
 
 
@@ -35,6 +38,7 @@ def biz_logging(func):
     @wraps(func)
     def with_logging(*args, **kwargs):
         return func(*args, **kwargs)
+
     return with_logging
 
 
@@ -48,14 +52,48 @@ def get_result(data=None, success=True, error_code=0, message=None):
     return jsonify({"success": success, "error_code": error_code, "message": message, "data": data})
 
 
+def make_code(args, parent_id):
+    all_code_list = []
+    for i in args:
+        all_code_list.append(i.get("code"))
+
+    if len(all_code_list) == 1:
+        if all_code_list[-1].count("-") == 0:
+            return parent_id + "-01"
+    else:
+        count_ = parent_id.count("-")
+        temp = lambda x: [_ for _ in all_code_list if _.count("-") == x]
+        if count_ == 0:
+            temp_list = temp(1)
+        elif count_ == 1:
+            temp_list = temp(2)
+        elif count_ == 2:
+            temp_list = temp(3)
+        elif count_ == 3:
+            temp_list = temp(4)
+        else:
+            return None
+        temp_list.sort()
+        code = parent_id + "-" + ("%s" % str(int(temp_list[-1].split("-")[-1]) + 1)).zfill(2)
+        return code
+
+
 def param_judge(recv_param, regulate_param):
     parm_keys = list(recv_param.keys())
     parm_keys.sort()
     regulate_param.sort()
-    if parm_keys == regulate_param and len(parm_keys) == len([_ for _ in recv_param.values() if _]):
+
+    temp_list = list(set(parm_keys).intersection(set(regulate_param)))
+    temp_list.sort()
+    if temp_list == regulate_param:
         return True
     else:
         return False
+
+    # if parm_keys == regulate_param and len(parm_keys) == len([_ for _ in recv_param.values() if _]):
+    #     return True
+    # else:
+    #     return False
 
 
 def random_string(n=32):
@@ -91,7 +129,8 @@ def set_session(params):
     elif user_info_all == -3:
         return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 操作失败")
 
-    if generate_md5(params.get("passWord", "") + user_info_all[0].get("salt", "")) == user_info_all[0].get("password", ""):
+    if generate_md5(params.get("passWord", "") + user_info_all[0].get("salt", "")) == user_info_all[0].get("password",
+                                                                                                           ""):
         token_value = random_string()
         privilege = []
 
@@ -126,5 +165,3 @@ def set_session(params):
 if __name__ == "__main__":
     for i in range(1):
         print(random_string())
-
-

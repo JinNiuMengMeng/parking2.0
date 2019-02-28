@@ -3,12 +3,11 @@ import pymysql
 
 
 class MysqlHelper(object):
-    # host = "192.168.43.38"
-    host = "192.168.14.200"
+    host = "192.168.14.137"
     port = 3306
     database = "yilu_park"
     user = "root"
-    password = "123456"
+    password = "emb@3967968"
     charset = "utf8"
     conn = None
     cur = None
