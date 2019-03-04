@@ -56,10 +56,8 @@ def make_code(args, parent_id):
     all_code_list = []
     for i in args:
         all_code_list.append(i.get("code"))
-
     if len(all_code_list) == 1:
-        if all_code_list[-1].count("-") == 0:
-            return parent_id + "-01"
+        return parent_id + "-01"
     else:
         count_ = parent_id.count("-")
         temp = lambda x: [_ for _ in all_code_list if _.count("-") == x]

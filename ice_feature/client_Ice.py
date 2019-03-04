@@ -104,5 +104,5 @@ def py_Send_St(communicator):
 
 with Ice.initialize(sys.argv) as communicator:  # 初始化运行环境
 
-    # py_Send_St(communicator)
-    st_Send_Py(communicator)
+    py_Send_St(communicator)
+    # st_Send_Py(communicator)

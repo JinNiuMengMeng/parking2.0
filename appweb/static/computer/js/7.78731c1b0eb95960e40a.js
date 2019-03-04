@@ -1,0 +1,2 @@
+webpackJsonp([7],{"0dX8":function(t,e){},"7r/c":function(t,e,n){"use strict";Object.defineProperty(e,"__esModule",{value:!0});var r={render:function(){var t=this.$createElement,e=this._self._c||t;return e("div",{attrs:{id:"account"}},[this._v("\n    账户管理\n\t\t "),e("el-button",{attrs:{type:"primary"}},[this._v("主要按钮")])],1)},staticRenderFns:[]};var a=n("C7Lr")({data:function(){return{}},created:function(){},mounted:function(){},methods:{}},r,!1,function(t){n("0dX8")},"data-v-1901b487",null);e.default=a.exports}});
+//# sourceMappingURL=7.78731c1b0eb95960e40a.js.map

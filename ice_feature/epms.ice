@@ -10,6 +10,7 @@ module stpy {
 
 		说明:	根据命令字和Json串内容，确定具体服务类型
 		*/
+		// 上传车辆信息
         ["amd"] string msgSt2py(string dataJson, int command, int sessionID);
     };
 
@@ -24,6 +25,7 @@ module stpy {
 
 		说明:	根据命令字和Json串内容，确定具体服务类型
 		*/
+		// 抬杆落杆
 		 int msgPy2st(string dataJson, int command, int sessionID);
     };
 };
