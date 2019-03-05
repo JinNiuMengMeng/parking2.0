@@ -1,23 +1,34 @@
 # -*- coding:utf-8 -*-
+
 import pymysql
+from DBUtils.PooledDB import PooledDB
+
+POOL = PooledDB(
+    creator=pymysql,
+    maxconnections=10,
+    mincached=10,
+    maxcached=0,
+    blocking=True,
+    maxusage=None,
+    ping=0,
+    host='127.0.0.1',
+    port=3306,
+    user='root',
+    database='yilu_park',
+    password='emb@3967968',
+    charset='utf8',
+    cursorclass=pymysql.cursors.DictCursor
+)
 
 
 class MysqlHelper(object):
-    host = "192.168.14.137"
-    port = 3306
-    database = "yilu_park"
-    user = "root"
-    password = "emb@3967968"
-    charset = "utf8"
     conn = None
     cur = None
 
     @classmethod
     def __connect(cls):
         try:
-            cls.conn = pymysql.connect(host=cls.host, user=cls.user, password=cls.password,
-                                       database=cls.database, port=cls.port, charset=cls.charset,
-                                       cursorclass=pymysql.cursors.DictCursor)
+            cls.conn = POOL.connection()
             cls.cur = cls.conn.cursor()
             if cls.conn and cls.cur:
                 return True
@@ -38,8 +49,6 @@ class MysqlHelper(object):
                 return count
         except Exception as ex:
             return data_one
-        finally:
-            cls.__close()
 
     @classmethod
     def fetchall(cls, sql, params=None):
@@ -53,9 +62,7 @@ class MysqlHelper(object):
             return data_all
         except Exception as ex:
             return data_all
-        finally:
-            cls.__close()
-
+            
     @classmethod
     def __item(cls, sql, params=None):
         count = -3
@@ -67,8 +74,6 @@ class MysqlHelper(object):
             return count
         except Exception as ex:
             return count
-        finally:
-            cls.__close()
 
     @classmethod
     def update(cls, sql, params=None):
@@ -86,4 +91,3 @@ class MysqlHelper(object):
     def __close(cls):
         if cls.cur:
             cls.cur.close()
-

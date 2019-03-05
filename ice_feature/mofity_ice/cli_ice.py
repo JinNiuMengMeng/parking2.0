@@ -2,7 +2,6 @@
 
 import sys
 import Ice
-import yaml
 
 Ice.loadSlice("./stPython.ice")
 import stpy
@@ -16,40 +15,40 @@ class StPy(stpy.st2py):
             # json_data = yaml.safe_load(datajson)
             print(datajson)
             print(seq)
+            return 1
         except:
             return 0
-        return 1
 
     def upLaneWorkstat(self, datajson, seq, current=None):
         """ 接收车道工作状态 """
-        print(datajson)
-        print(seq)
-        return 1
+        try:
+            print(datajson)
+            print(seq)
+            return 1
+        except:
+            return 0
 
 
 def py_Send_St(communicator):
-    send_data_1 = '{"doorNo": 1,"laneNo": 2}'
 
-    py_send = communicator.stringToProxy("Epms_st:default -p 10000")
+    # py_send = communicator.stringToProxy("Epms_st:default  -p 9528")
+    py_send = communicator.stringToProxy("Epms_st:default -h 192.168.14.137 -p 9528")
     recv_Barrier = stpy.py2stPrx.checkedCast(py_send)
     if not recv_Barrier:
         raise RuntimeError("Invalid proxy")
 
     # login
-    adapter = communicator.createObjectAdapterWithEndpoints("ssAdapter", "default")
+    adapter = communicator.createObjectAdapterWithEndpoints("xmrbi", "default")
     py_handle = StPy()
 
-    adapter.add(py_handle, communicator.stringToIdentity("Epms_py"))
+    adapter.add(py_handle, communicator.stringToIdentity("Epms_st"))
     adapter.activate()
 
-    derived = stpy.st2pyPrx.uncheckedCast(adapter.createProxy(communicator.stringToIdentity("Epms_py")))
-
+    derived = stpy.st2pyPrx.uncheckedCast(adapter.createProxy(communicator.stringToIdentity("Epms_st")))
     res_login = recv_Barrier.login(derived, "nihao", "123")
     print(res_login)
+
     communicator.waitForShutdown()
-
-
-
 
 
 '''

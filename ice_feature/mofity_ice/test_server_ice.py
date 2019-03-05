@@ -15,12 +15,17 @@ class FakeLane(stpy.py2st):
         print("passWd:", passWd)
         return 1
 
+    def laneRailUp(self, doorNo, laneNo, current=None):
+        print("模拟车道服务端--接收数据为: ")
+        print("doorNo:", doorNo)
+        print("laneNo:", laneNo)
+        return 1
+
 
 with Ice.initialize(ICE_CONFIG) as ic:  # 初始化运行环境
-    adapter = ic.createObjectAdapterWithEndpoints("ssAdapter", "default -p 10000")
+    adapter = ic.createObjectAdapterWithEndpoints("xmrbi", "default -p 9528")
     st_handle = FakeLane()
 
     adapter.add(st_handle, ic.stringToIdentity("Epms_st"))
-
     adapter.activate()
     ic.waitForShutdown()

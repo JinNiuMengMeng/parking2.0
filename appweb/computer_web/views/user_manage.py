@@ -53,8 +53,7 @@ def logout():  # 退出
 def add_user():  # 添加用户
     params = request.get_json()
     if param_judge(params, ["user_name", "real_name", "password", "user_role"]):
-        quary_sql = """select del_flag from usr_sys_user where user_name="{}" or real_name="{}";""".format(
-            params.get("user_name", ""), params.get("real_name", ""))
+        quary_sql = """select del_flag from usr_sys_user where user_name="{}" or real_name="{}";""".format(params.get("user_name", ""), params.get("real_name", ""))
         quary_res = MysqlHelper.fetchone(quary_sql)
 
         salt = random_string()
@@ -62,8 +61,7 @@ def add_user():  # 添加用户
         user_id = random_string()
         # 插入用户表
         if quary_res == 0:  # 不存在
-            sql1 = """INSERT INTO yilu_park.usr_sys_user(id, user_type, user_name, real_name, password, salt, sex, state, 
-                del_flag, create_time, modify_time) VALUES ("{}", 1, "{}", "{}", "{}", "{}", 1, 1, 1, "{}", "{}");""".format(
+            sql1 = """INSERT INTO yilu_park.usr_sys_user(id, user_type, user_name, real_name, password, salt, sex, state, del_flag, create_time, modify_time) VALUES ("{}", 1, "{}", "{}", "{}", "{}", 1, 1, 1, "{}", "{}");""".format(
                 user_id, params.get("user_name"), params.get("real_name"), password, salt,
                 datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -71,29 +69,20 @@ def add_user():  # 添加用户
             if quary_res.get("del_flag") == 1:
                 return get_result(success=False, error_code=USER_EXIST, message="用户已经存在")
             else:
-                sql1 = """update yilu_park.usr_sys_user set state=1, del_flag=1, user_name="{}", real_name="{}", 
-                        password="{}", salt="{}", modify_time="{}" where user_name="{}";""".format(
-                    params.get("user_name"),
-                    params.get("real_name"), password, salt, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    params.get("user_name"))
+                sql1 = """update yilu_park.usr_sys_user set state=1, del_flag=1, user_name="{}", real_name="{}", password="{}", salt="{}", modify_time="{}" where user_name="{}";""".format(
+                    params.get("user_name"), params.get("real_name"), password, salt, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_name"))
 
         # 插入用户角色表
-        quary_sql2 = """select del_flag from usr_user_role where user_id=(select id from usr_sys_user where user_name="{}");""".format(
-            params.get("user_name"))
-
+        quary_sql2 = """select del_flag from usr_user_role where user_id=(select id from usr_sys_user where user_name="{}");""".format(params.get("user_name"))
         quary_res2 = MysqlHelper.fetchone(quary_sql2)
         quary_role_id = """select code from usr_role where name="{}";""".format(params.get("user_role"))
         role_id = MysqlHelper.fetchone(sql=quary_role_id).get("code")
 
         if quary_res2 == 0:  # 不存在
-            sql2 = """INSERT INTO yilu_park.usr_user_role(id, user_id, role_id, del_flag, create_time, modify_time) 
-                      VALUES ("{}", "{}", "{}", 1, "{}", "{}");""".format(
-                random_string(), user_id, role_id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+            sql2 = """INSERT INTO yilu_park.usr_user_role(id, user_id, role_id, del_flag, create_time, modify_time) VALUES ("{}", "{}", "{}", 1, "{}", "{}");""".format(
+                random_string(), user_id, role_id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         else:
-            sql2 = """update yilu_park.usr_user_role set del_flag=1, user_id="{}", role_id="{}" where role_id="{}";""".format(
-                user_id, role_id, role_id)
-
+            sql2 = """update yilu_park.usr_user_role set del_flag=1, user_id="{}", role_id="{}" where role_id="{}";""".format(user_id, role_id, role_id)
         for i in [sql1, sql2]:
             res = MysqlHelper.insert(sql=i)
             if res == -1:
@@ -112,10 +101,8 @@ def add_user():  # 添加用户
 def del_user():  # 删除用户
     params = request.get_json()
     if param_judge(params, ["user_id", ]):
-        sql1 = """update yilu_park.usr_sys_user set state=0, del_flag=0, modify_time="{}" where id="{}";""".format(
-            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_id"))
-        sql2 = """update yilu_park.usr_user_role set del_flag=0, modify_time="{}" where user_id="{}";""".format(
-            datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_id"), )
+        sql1 = """update yilu_park.usr_sys_user set state=0, del_flag=0, modify_time="{}" where id="{}";""".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_id"))
+        sql2 = """update yilu_park.usr_user_role set del_flag=0, modify_time="{}" where user_id="{}";""".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("user_id"), )
         for i in [sql1, sql2]:
             res = MysqlHelper.insert(sql=i)
             if res == -1:

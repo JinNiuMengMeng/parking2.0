@@ -16,7 +16,6 @@ def get_all_role():  # 获取角色列表
     user_token = request.cookies.get("token")
     user_role_id = session.get(user_token).get("roleInfo").get("role_id")
     quary_sql = """SELECT code, name, state, parent_id, create_time from usr_role where del_flag=1 and parent_id="{user_role_id}" or code="{user_role_id}";""".format(user_role_id=user_role_id)
-
     res = MysqlHelper.fetchall(sql=quary_sql)
 
     # 将当前登录的用户角色的parent_id设为None(前端需求)
@@ -26,9 +25,8 @@ def get_all_role():  # 获取角色列表
         else:
             pass
 
-    # 查询当前用户角色的level
+    # 查询当前用户角色的level(前端需求)
     res3 = MysqlHelper.fetchone(sql="""SELECT code, parent_id from usr_role where del_flag=1 and code="{}";""".format(user_role_id))
-
     user_parent_id = res3.get("parent_id")
 
     if not user_parent_id:  # parent_id 为空, 超级管理员
@@ -91,11 +89,8 @@ def del_role():  # 删除角色
         res = MysqlHelper.fetchone(sql=quary_sql)
         if res != 0:
             return get_result(success=False, error_code=USER_EXIST, message="存在用户占用该角色, 不可删除")
-
         mysql_sql = "update yilu_park.usr_role set state=%s, del_flag=%s, delete_time=%s where code=%s;"
-        args = (2, 0, datetime.datetime.now(), params.get("role_id"))
-
-        res = MysqlHelper.update(sql=mysql_sql, params=args)
+        res = MysqlHelper.update(sql=mysql_sql, params=(2, 0, datetime.datetime.now(), params.get("role_id")))
         if res == -1:
             return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
         elif res == -3:
@@ -107,7 +102,7 @@ def del_role():  # 删除角色
 
 
 @computer_web_main.route("/editrole", methods=["GET", "POST"])
-# @check_login
+@check_login
 def edit_role():  # 修改角色
     params = request.get_json()
     if param_judge(params, ["role_id", "name"]):
@@ -115,10 +110,8 @@ def edit_role():  # 修改角色
         res = MysqlHelper.fetchone(sql=find_role, params=(params.get("role_id"), 1))
         if res == -1 or res == -2:
             return get_result(success=False, error_code=USER_EXIST, message="不存在该角色")
-
         mysql_sql = "UPDATE yilu_park.usr_role SET name=%s, modify_time=%s WHERE code=%s;"
-        args = (params.get("name"), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("role_id"))
-        res = MysqlHelper.insert(sql=mysql_sql, params=args)
+        res = MysqlHelper.insert(sql=mysql_sql, params=(params.get("name"), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), params.get("role_id")))
         if res == -1:
             return get_result(success=False, error_code=MYSQL_HANDLE_ERROR, message="MySQL 连接失败")
         elif res == -3:
