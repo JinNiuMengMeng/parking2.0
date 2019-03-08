@@ -4,6 +4,7 @@ import os
 from appweb import create_app as appweb_create_app
 from appweb import socketio
 
+
 appWeb = appweb_create_app(os.getenv('FLASK_CONFIG') or 'default', 'appWeb')
 
 

@@ -1,5 +1,4 @@
 # coding:utf-8
-import datetime
 from flask import Flask
 from config.app_config import config
 from flask_socketio import SocketIO

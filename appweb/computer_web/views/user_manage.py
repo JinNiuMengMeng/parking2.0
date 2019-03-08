@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 import datetime
-try:
-    import sys
-    reload(sys)
-    sys.setdefaultencoding("utf-8")
-except:
-    pass
 from flask import session, request, make_response
 from appweb.computer_web import computer_web_main
 from appweb.plugins.decorators import get_result, param_judge, set_session, random_string, generate_md5, check_login
