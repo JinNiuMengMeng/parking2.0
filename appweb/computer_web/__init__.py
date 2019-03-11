@@ -14,4 +14,4 @@ computer_web_main = Blueprint(
     static_folder=os.getcwd() + "/appweb/static"
 )
 
-from appweb.computer_web.views import index, error_handler, user_manage, permission_manage, role_manage
+from appweb.computer_web.views import index, error_handler, user_manage, permission_manage, role_manage, lane_manage

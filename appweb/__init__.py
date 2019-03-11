@@ -1,5 +1,5 @@
 # coding:utf-8
-from flask import Flask
+from flask import Flask, session
 from config.app_config import config
 from flask_socketio import SocketIO
 
@@ -19,5 +19,6 @@ def create_app(config_name, app_name):
     app.register_blueprint(mobile_web_main, url_prefix="/parking2/mobile")
 
     socketio.init_app(app)
+
 
     return app

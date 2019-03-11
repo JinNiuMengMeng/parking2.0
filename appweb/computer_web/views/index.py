@@ -5,10 +5,10 @@ from appweb.computer_web import computer_web_main
 from appweb.plugins.decorators import get_result
 
 
-@computer_web_main.route('/')
-def index():
-    return render_template("computer/index.html")
-
+# @computer_web_main.route('/')
+# def index():
+#     return render_template("computer/index.html")
+#
 
 @computer_web_main.route('/recvLaneMsg')
 def recv_lane_mesg():

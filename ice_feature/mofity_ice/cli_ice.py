@@ -2,30 +2,36 @@
 
 import sys
 import Ice
+import yaml
 Ice.loadSlice("./stPython.ice")
 import stpy
 
 
-class StPy(stpy.st2py):
+class StPy(stpy.st2py): # 成功返回0, 失败返回-1
     def upLaneDevStat(self, datajson, seq, current=None):
         """ 接收车道设备信息"""
-        print("----------- Python 站级服务端接收数据为: -----------")
         try:
             # json_data = yaml.safe_load(datajson)
-            print(datajson)
-            print(seq)
-            return 1
-        except:
+            print("接收车道设备信息:", datajson, seq)
             return 0
+        except:
+            return -1
 
     def upLaneWorkstat(self, datajson, seq, current=None):
         """ 接收车道工作状态 """
         try:
-            print(datajson)
-            print(seq)
-            return 1
-        except:
+            print("接收车道工作状态:", datajson, seq)
             return 0
+        except:
+            return -1
+
+    def upLaneRecord(self, datajson, seq, current=None):
+        """ 车辆通行记录 """
+        try:
+            print("车辆通行记录:", datajson, seq)
+            return 0
+        except:
+            return -1
 
 
 def py_Send_St(communicator):
@@ -56,16 +62,22 @@ def py_Send_St(communicator):
     print("落杆结果:", res_lane_rail_down)
 
     res_config_tide_lane = recv_Barrier.configTideLane(100, 1, 0)
-    print("潮汐车道:", res_config_tide_lane)
+    print("关闭潮汐车道:", res_config_tide_lane)
+
+    res_config_tide_lane = recv_Barrier.configTideLane(100, 1, 1)
+    print("打开潮汐车道:", res_config_tide_lane)
 
     res_upload_car_img = recv_Barrier.uploadCarImg(100, 1, 0)
-    print("车辆图片:", res_upload_car_img)
+    print("关闭车辆图片:", res_upload_car_img)
 
-    res_open_free_pass = recv_Barrier.openFreePass(100, 1)
-    print("打开免费通过:", res_open_free_pass)
+    res_upload_car_img = recv_Barrier.uploadCarImg(100, 1, 1)
+    print("开启车辆图片:", res_upload_car_img)
 
     res_close_free_pass = recv_Barrier.closeFreePass(100, 1)
-    print("关闭免费通过:", res_close_free_pass)
+    print("关闭自由流:", res_close_free_pass)
+
+    res_open_free_pass = recv_Barrier.openFreePass(100, 1)
+    print("打开自由流:", res_open_free_pass)
 
     res_trigger_2nd_lpr = recv_Barrier.trigger2ndLpr(100, 1)
     print("触发二次车牌识别:", res_trigger_2nd_lpr)
@@ -76,11 +88,11 @@ def py_Send_St(communicator):
     res_lane_wakeup = recv_Barrier.laneWakeup(100, 1)
     print("车道唤醒:", res_lane_wakeup)
 
-    res_on_duty = recv_Barrier.onDuty(100, 1)
-    print("车道上班:", res_on_duty)
-
     res_off_duty = recv_Barrier.offDuty(100, 1)
     print("车道下班:", res_off_duty)
+
+    res_on_duty = recv_Barrier.onDuty(100, 1)
+    print("车道上班:", res_on_duty)
 
     # res_logout = recv_Barrier.logout(derived, "nihao")
     # print("退出结果:", res_logout)

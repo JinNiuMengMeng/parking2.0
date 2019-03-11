@@ -1,8 +1,7 @@
 module stpy {
     interface st2py
 	{
-		
-		//前端实现
+		// 成功返回seq, 失败返回-seq
 		int upLaneRecord(string dataJson, int seq);
 		int upLaneDevStat(string dataJson, int seq);
 		int upLaneWorkstat(string dataJson, int seq);
@@ -11,7 +10,6 @@ module stpy {
 
     interface py2st
 	{
-
 		//站级实现
 		int laneRailUp(int doorNo, int laneNo);
 		int laneRailDown(int doorNo, int laneNo);

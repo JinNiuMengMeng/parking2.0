@@ -2,7 +2,10 @@
 import datetime
 import hashlib
 import os
+import sys
 from functools import wraps
+
+import Ice
 from flask import abort, jsonify, make_response, session, request
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
@@ -158,6 +161,14 @@ def set_session(params):
     else:
         res = get_result(success=False, error_code=USER_PASSWORD_ERROR, message="用户密码错误")
         return res
+
+
+def init_ice():
+    with Ice.initialize(sys.argv) as communicator:  # 初始化运行环境
+        py_send = communicator.stringToProxy("Epms_st:default -h 192.168.14.137 -p 9528")
+        recv_Barrier = stpy.py2stPrx.checkedCast(py_send)
+        if not recv_Barrier:
+            raise RuntimeError("Invalid proxy")
 
 
 if __name__ == "__main__":
