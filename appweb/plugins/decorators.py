@@ -4,13 +4,13 @@ import hashlib
 import os
 import sys
 from functools import wraps
-
 import Ice
 from flask import abort, jsonify, make_response, session, request
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
-
 from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR
+Ice.loadSlice("stPython.ice")
+import stpy
 
 
 def check_login(func):
@@ -163,12 +163,16 @@ def set_session(params):
         return res
 
 
-def init_ice():
+def init_ice(host, port):
     with Ice.initialize(sys.argv) as communicator:  # 初始化运行环境
-        py_send = communicator.stringToProxy("Epms_st:default -h 192.168.14.137 -p 9528")
+        py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (host, port))
         recv_Barrier = stpy.py2stPrx.checkedCast(py_send)
         if not recv_Barrier:
             raise RuntimeError("Invalid proxy")
+        print("-------start----")
+        print(recv_Barrier)
+        print("----end-------")
+        return recv_Barrier
 
 
 if __name__ == "__main__":

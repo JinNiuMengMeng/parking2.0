@@ -1,9 +1,10 @@
 # -*- coding:utf-8 -*-
-
+import os
 import sys
 import Ice
 import yaml
-Ice.loadSlice("./stPython.ice")
+
+Ice.loadSlice("-I%s stPython.ice"%(os.getcwd()+"/slice"))
 import stpy
 
 

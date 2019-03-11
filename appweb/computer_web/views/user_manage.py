@@ -2,7 +2,8 @@
 import datetime
 from flask import session, request, make_response
 from appweb.computer_web import computer_web_main
-from appweb.plugins.decorators import get_result, param_judge, set_session, random_string, generate_md5, check_login
+from appweb.plugins.decorators import get_result, param_judge, set_session, random_string, generate_md5, check_login, \
+    init_ice
 from appweb.plugins.handle_mysql import MysqlHelper
 from config.config import PARAMS_ERROR, SESSION_HANDLE_ERROR, MYSQL_HANDLE_ERROR, USER_EXIST
 
@@ -23,6 +24,10 @@ def login():  # 登录
     params = request.get_json()
     if param_judge(params, ["userName", "passWord"]):
         res = set_session(params)
+        ice_proxy = init_ice(host="192.168.14.137", port="9528")
+        print(type(ice_proxy))
+        session["recv_Barrier"] = ice_proxy.__dict__
+
         return res
     else:
         return get_result(success=False, error_code=PARAMS_ERROR, message="参数异常")
