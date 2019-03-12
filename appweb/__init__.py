@@ -1,7 +1,6 @@
 # coding:utf-8
 
 from flask import Flask
-from appweb.plugins.decorators import init_ice
 from config.app_config import config
 from flask_socketio import SocketIO
 
