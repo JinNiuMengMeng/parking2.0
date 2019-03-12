@@ -10,7 +10,7 @@ from flask import Blueprint
 computer_web_main = Blueprint(
     name='computer_web_main',
     import_name=__name__,
-    # template_folder=os.getcwd() + "/appweb/templates",
+    template_folder=os.getcwd() + "/appweb/templates",
     # static_folder=os.getcwd() + "/appweb/static"
 )
 
