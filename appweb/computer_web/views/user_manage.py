@@ -2,8 +2,7 @@
 import datetime
 from flask import session, request, make_response
 from appweb.computer_web import computer_web_main
-from appweb.plugins.decorators import get_result, param_judge, set_session, random_string, generate_md5, check_login, \
-    init_ice
+from appweb.plugins.decorators import get_result, param_judge, set_session, random_string, generate_md5, check_login
 from appweb.plugins.handle_mysql import MysqlHelper
 from config.config import PARAMS_ERROR, SESSION_HANDLE_ERROR, MYSQL_HANDLE_ERROR, USER_EXIST
 

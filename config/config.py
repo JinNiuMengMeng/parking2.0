@@ -18,6 +18,8 @@ PY2ST_CONFIG_LANESLEEP = 0x0004A900	            # 车道唤醒，休眠
 PY2ST_TRIGGER_2ND_LPR = 0x0004AA00	            # 二次识别
 PY2ST_CONFIG_SYSTEM_ON_DUTY = 0x0004AB00        # 上下班
 
+ICE_HOST = "192.168.14.137"
+ICE_PORT = 9528
 
 Car_Entrance = [                # 车辆出口字段
     "door_type",                # 进入口类型, 入口

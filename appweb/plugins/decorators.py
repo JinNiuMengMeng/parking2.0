@@ -2,16 +2,11 @@
 import datetime
 import hashlib
 import os
-import sys
 from functools import wraps
-import Ice
 from flask import abort, jsonify, make_response, session, request
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
 from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR
-
-Ice.loadSlice("stPython.ice")
-import stpy
 
 
 def check_login(func):
@@ -163,17 +158,6 @@ def set_session(params):
         res = get_result(success=False, error_code=USER_PASSWORD_ERROR, message="用户密码错误")
         return res
 
-
-def init_ice(host, port):
-    communicator = Ice.initialize(sys.argv)  # 初始化运行环境
-    py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (host, port))
-    recv_Barrier = stpy.py2stPrx.checkedCast(py_send)
-    if not recv_Barrier:
-        raise RuntimeError("Invalid proxy")
-    return recv_Barrier
-
-
-cli_ice = init_ice("192.168.14.137", 9528)
 
 if __name__ == "__main__":
     for i in range(1):
