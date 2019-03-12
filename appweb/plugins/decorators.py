@@ -9,6 +9,7 @@ from flask import abort, jsonify, make_response, session, request
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
 from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR
+
 Ice.loadSlice("stPython.ice")
 import stpy
 
@@ -164,16 +165,15 @@ def set_session(params):
 
 
 def init_ice(host, port):
-    with Ice.initialize(sys.argv) as communicator:  # 初始化运行环境
-        py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (host, port))
-        recv_Barrier = stpy.py2stPrx.checkedCast(py_send)
-        if not recv_Barrier:
-            raise RuntimeError("Invalid proxy")
-        print("-------start----")
-        print(recv_Barrier)
-        print("----end-------")
-        return recv_Barrier
+    communicator = Ice.initialize(sys.argv)  # 初始化运行环境
+    py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (host, port))
+    recv_Barrier = stpy.py2stPrx.checkedCast(py_send)
+    if not recv_Barrier:
+        raise RuntimeError("Invalid proxy")
+    return recv_Barrier
 
+
+cli_ice = init_ice("192.168.14.137", 9528)
 
 if __name__ == "__main__":
     for i in range(1):

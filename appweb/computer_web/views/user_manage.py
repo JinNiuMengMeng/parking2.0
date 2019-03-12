@@ -24,10 +24,6 @@ def login():  # 登录
     params = request.get_json()
     if param_judge(params, ["userName", "passWord"]):
         res = set_session(params)
-        ice_proxy = init_ice(host="192.168.14.137", port="9528")
-        print(type(ice_proxy))
-        session["recv_Barrier"] = ice_proxy.__dict__
-
         return res
     else:
         return get_result(success=False, error_code=PARAMS_ERROR, message="参数异常")

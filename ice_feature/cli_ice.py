@@ -4,6 +4,8 @@ import sys
 import Ice
 import yaml
 
+from appweb import socketio
+
 Ice.loadSlice("-I%s stPython.ice"%(os.getcwd()+"/slice"))
 import stpy
 
