@@ -4,13 +4,11 @@ import sys
 import Ice
 import yaml
 
-from appweb import socketio
-
-Ice.loadSlice("-I%s stPython.ice"%(os.getcwd()+"/slice"))
+Ice.loadSlice("-I%s stPython.ice" % (os.getcwd() + "/slice"))
 import stpy
 
 
-class StPy(stpy.st2py): # 成功返回0, 失败返回-1
+class StPy(stpy.st2py):  # 成功返回0, 失败返回-1
     def upLaneDevStat(self, datajson, seq, current=None):
         """ 接收车道设备信息"""
         try:
@@ -38,7 +36,6 @@ class StPy(stpy.st2py): # 成功返回0, 失败返回-1
 
 
 def py_Send_St(communicator):
-
     # py_send = communicator.stringToProxy("Epms_st:default  -p 9528")
     py_send = communicator.stringToProxy("Epms_st:default -h 192.168.14.137 -p 9528")
     recv_Barrier = stpy.py2stPrx.checkedCast(py_send)
