@@ -8,10 +8,22 @@ import Ice
 from flask import abort, jsonify, make_response, session, request
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
-from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR, ICE_HOST, \
-    ICE_PORT
+from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR, ICE_HOST, ICE_PORT
 Ice.loadSlice("stPython.ice")
 import stpy
+
+
+def handle_f():
+    communicator = Ice.initialize(sys.argv)  # 初始化运行环境
+    py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (ICE_HOST, ICE_PORT))
+    recv_barrier = stpy.py2stPrx.checkedCast(py_send)
+    if not recv_barrier:
+        raise RuntimeError("Invalid proxy")
+
+    return recv_barrier
+
+
+handle_ = handle_f()
 
 
 def handle_func(func_name, door_no=None, lane_no=None, on_off=None, ice_name=None):
@@ -65,9 +77,9 @@ def biz_logging(func):
     return with_logging
 
 
-def generate_md5(str):
+def generate_md5(string_):
     hl = hashlib.md5()
-    hl.update(str.encode(encoding='utf-8'))
+    hl.update(string_.encode(encoding='utf-8'))
     return hl.hexdigest()
 
 
