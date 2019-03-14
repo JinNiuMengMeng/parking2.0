@@ -98,3 +98,15 @@ ROLE_NOT_PRI = 40004                # 角色没有权限
 
 PRI_ERROR = 50001                   # 权限名错误
 PRI_NUMBER = 50002                  # 超过权限层数
+
+LANE_RAIL_UP_ERROR = 60001          # 抬杆失败
+LANE_RAIL_DOWN_ERROR = 60002        # 落杆失败
+CONFIG_TIDE_LANE_ERROR = 60003      # 配置潮汐车道失败
+UPLOAD_CAR_IMG_ERROR = 60004        # 配置上传车辆图片失败
+OPEN_FREE_PASS_ERROR = 60005        # 打开自由流接口失败
+CLOSE_FREE_PASS_ERROR = 60006       # 关闭自由流接口失败
+TRIGGER_2ND_LPR_ERROR = 60007       # 车牌二次识别失败
+LANE_SLEEP_ERROR = 60008            # 配置车道睡眠失败
+LANE_WAKEUP_ERROR = 60009           # 车道唤醒失败
+ON_DUTY_ERROR = 60010               # 配置车道上班失败
+OFF_DUTY_ERROR = 60011              # 配置车道下班失败

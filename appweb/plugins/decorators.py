@@ -2,11 +2,34 @@
 import datetime
 import hashlib
 import os
+import sys
 from functools import wraps
+import Ice
 from flask import abort, jsonify, make_response, session, request
 from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
-from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR
+from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR, ICE_HOST, \
+    ICE_PORT
+
+Ice.loadSlice("stPython.ice")
+import stpy
+
+
+def handle_func(func_name, door_no, lane_no, on_off=None):
+    try:
+        with Ice.initialize(sys.argv) as communicator:  # 初始化运行环境
+            py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (ICE_HOST, ICE_PORT))
+            recv_barrier = stpy.py2stPrx.checkedCast(py_send)
+            if not recv_barrier:
+                raise RuntimeError("Invalid proxy")
+
+            if func_name == "configTideLane" or func_name == "uploadCarImg":
+                res = eval("recv_barrier.%s" % func_name)(door_no, lane_no, on_off)
+            else:
+                res = eval("recv_barrier.%s" % func_name)(door_no, lane_no)
+        return res
+    except:
+        return "车道连接失败, 无法控制车道!"
 
 
 def check_login(func):
