@@ -110,3 +110,4 @@ LANE_SLEEP_ERROR = 60008            # 配置车道睡眠失败
 LANE_WAKEUP_ERROR = 60009           # 车道唤醒失败
 ON_DUTY_ERROR = 60010               # 配置车道上班失败
 OFF_DUTY_ERROR = 60011              # 配置车道下班失败
+REQUEST_ERROR = 60012               # 设置页面显示门号道号失败

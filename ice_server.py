@@ -49,7 +49,7 @@ def py_Send_St(communicator):
     adapter.activate()
     derived = stpy.st2pyPrx.uncheckedCast(adapter.createProxy(communicator.stringToIdentity("Epms_st")))
 
-    res_login = recv_Barrier.login(derived, "nihao", "123")
+    res_login = recv_Barrier.login(derived, "python_station", "123")
     print("登录结果:", res_login)
 
     res_heart = recv_Barrier.heartBeat()

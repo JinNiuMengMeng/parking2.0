@@ -10,12 +10,11 @@ from flask_login import current_user
 from appweb.plugins.handle_mysql import MysqlHelper
 from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERROR, SESSION_HANDLE_ERROR, ICE_HOST, \
     ICE_PORT
-
 Ice.loadSlice("stPython.ice")
 import stpy
 
 
-def handle_func(func_name, door_no, lane_no, on_off=None):
+def handle_func(func_name, door_no=None, lane_no=None, on_off=None, ice_name=None):
     try:
         with Ice.initialize(sys.argv) as communicator:  # 初始化运行环境
             py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (ICE_HOST, ICE_PORT))
@@ -25,6 +24,8 @@ def handle_func(func_name, door_no, lane_no, on_off=None):
 
             if func_name == "configTideLane" or func_name == "uploadCarImg":
                 res = eval("recv_barrier.%s" % func_name)(door_no, lane_no, on_off)
+            elif func_name == "logout":
+                res = eval("recv_barrier.%s" % func_name)(ice_name)
             else:
                 res = eval("recv_barrier.%s" % func_name)(door_no, lane_no)
         return res

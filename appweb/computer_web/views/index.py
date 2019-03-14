@@ -2,7 +2,7 @@
 from flask import render_template, request
 from appweb import socketio
 from appweb.computer_web import computer_web_main
-from appweb.plugins.decorators import get_result
+from appweb.plugins.decorators import get_result, handle_func
 
 
 @computer_web_main.route('/')
@@ -28,4 +28,7 @@ def socket_io_login(message):
 
 @socketio.on('disconnect')
 def socket_io_logout():
-    pass
+    handle_func(func_name="disableRequest", door_no=1, lane_no=2)  # 关闭页面显示的门号道号
+    handle_func(func_name="logout", ice_name="python_station")  # ice退出登录
+
+
