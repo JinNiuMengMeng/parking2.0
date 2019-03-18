@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import request
 from appweb.computer_web import computer_web_main
-from appweb.plugins.decorators import get_result, param_judge, handle_func, handle_
+from appweb.plugins.decorators import get_result, param_judge, handle_func
 from config.config import PARAMS_ERROR, LANE_RAIL_UP_ERROR, REQUEST_ERROR, LANE_RAIL_DOWN_ERROR, CONFIG_TIDE_LANE_ERROR, \
     UPLOAD_CAR_IMG_ERROR, OPEN_FREE_PASS_ERROR, CLOSE_FREE_PASS_ERROR, TRIGGER_2ND_LPR_ERROR, LANE_SLEEP_ERROR, \
     LANE_WAKEUP_ERROR, ON_DUTY_ERROR, OFF_DUTY_ERROR
@@ -188,13 +188,13 @@ def on_duty():  # 车道上班
 #         return get_result(success=False, error_code=PARAMS_ERROR, message="参数异常")
 
 
-@computer_web_main.route("/offDuty", methods=["GET", "POST"])
-def off_duty():  # 车道下班
-    res = handle_.onDuty(1, 2)
-    return get_result(data=res)
-
-
-@computer_web_main.route("/onDuty", methods=["GET", "POST"])
-def on_duty():  # 车道下班
-    res = handle_.onDuty(1, 2)
-    return get_result(data=res)
+# @computer_web_main.route("/offDuty", methods=["GET", "POST"])
+# def off_duty():  # 车道下班
+#     res = handle_.onDuty(1, 2)
+#     return get_result(data=res)
+#
+#
+# @computer_web_main.route("/onDuty", methods=["GET", "POST"])
+# def on_duty():  # 车道下班
+#     res = handle_.onDuty(1, 2)
+#     return get_result(data=res)

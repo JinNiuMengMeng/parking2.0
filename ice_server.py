@@ -7,31 +7,49 @@ Ice.loadSlice("-I%s stPython.ice" % (os.getcwd() + "/slice"))
 import stpy
 
 
+def get_result_ice(Result, Sequence, Expand):
+    return """{{"Result": {}, "Sequence": {}, "Expand": "{}"}}""".format(Result, Sequence, Expand)
+
+
 class StPy(stpy.st2py):  # 成功返回0, 失败返回-1
     def upLaneDevStat(self, datajson, seq, current=None):
         """ 接收车道设备信息"""
         try:
-            # json_data = yaml.safe_load(datajson)
-            print("接收车道设备信息:", datajson, seq)
-            return 0
+            json_data = yaml.safe_load(datajson)
+            result = get_result_ice(Result=0, Sequence=seq, Expand="")
+
+            print("接收车道设备信息:", json_data, seq)
+            print("返回数据:", result, seq)
+            return result
         except:
-            return -1
+            result = get_result_ice(Result=-1, Sequence=seq, Expand="Json解析失败, 请检查格式")
+            print("返回数据:", result, seq)
+            return result
 
     def upLaneWorkstat(self, datajson, seq, current=None):
         """ 接收车道工作状态 """
         try:
-            print("接收车道工作状态:", datajson, seq)
-            return 0
+            json_data = yaml.safe_load(datajson)
+            result = get_result_ice(Result=0, Sequence=seq, Expand="")
+
+            print("接收车道工作状态", json_data, seq)
+            print("返回数据:", get_result_ice(Result=0, Sequence=seq, Expand=""), seq)
+            return result
         except:
-            return -1
+            result = get_result_ice(Result=-1, Sequence=seq, Expand="Json解析失败, 请检查格式")
+            print("返回数据:", get_result_ice(Result=-1, Sequence=seq, Expand="Json解析失败, 请检查格式"), seq)
+            return result
 
     def upLaneRecord(self, datajson, seq, current=None):
         """ 车辆通行记录 """
         try:
-            print("车辆通行记录:", datajson, seq)
-            return 0
+            json_data = yaml.safe_load(datajson)
+            result = get_result_ice(Result=0, Sequence=seq, Expand="")
+            print("车辆通行记录:", json_data, seq)
+            return result
         except:
-            return -1
+            result = get_result_ice(Result=-1, Sequence=seq, Expand="Json解析失败, 请检查格式")
+            return result
 
 
 if __name__ == "__main__":

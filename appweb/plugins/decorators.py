@@ -12,18 +12,18 @@ from config.config import USER_PASSWORD_ERROR, USER_NOT_EXIST, MYSQL_HANDLE_ERRO
 Ice.loadSlice("stPython.ice")
 import stpy
 
-
-def handle_f():
-    communicator = Ice.initialize(sys.argv)  # 初始化运行环境
-    py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (ICE_HOST, ICE_PORT))
-    recv_barrier = stpy.py2stPrx.checkedCast(py_send)
-    if not recv_barrier:
-        raise RuntimeError("Invalid proxy")
-
-    return recv_barrier
-
-
-handle_ = handle_f()
+#
+# def handle_f():
+#     communicator = Ice.initialize(sys.argv)  # 初始化运行环境
+#     communicator.destroy()
+#     py_send = communicator.stringToProxy("Epms_st:default -h %s -p %s" % (ICE_HOST, ICE_PORT))
+#     recv_barrier = stpy.py2stPrx.checkedCast(py_send)
+#     if not recv_barrier:
+#         raise RuntimeError("Invalid proxy")
+#     return recv_barrier
+#
+#
+# handle_ = handle_f()
 
 
 def handle_func(func_name, door_no=None, lane_no=None, on_off=None, ice_name=None):
