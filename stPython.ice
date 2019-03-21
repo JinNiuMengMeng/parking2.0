@@ -26,6 +26,7 @@ module stpy {
 		int offDuty(int doorNo, int laneNo);
 		//跟车补录，车牌补录时由前端下发，站级通知车道上传一条实时车道设备状态，确认车道是否有车
 		int getRealtimeLaneDevStat(int doorNo, int laneNo);
+		int ledDispCharge(int doorNo, int laneNo, string displayInfo);
 
 		/*登陆接口
 		参数:   st2py* p 	-python Ice代理   由登陆接口传给站级服务端
